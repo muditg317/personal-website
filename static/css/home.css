@@ -1,0 +1,12 @@
+#visit_mythread:link,#visit_mythread:visited {
+  color: black;
+  text-decoration: none;
+}
+
+#visit_mythread:hover {
+  color: #8DAD53;
+}
+
+#mainBodyBkgdImg{
+  width: inherit;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>{% block page_title %}{% endblock %}</title>
+    <link rel="stylesheet" href="../static/css/base.css" />
+    <link rel="stylesheet" href="../static/css/header.css">
+    <link rel="stylesheet" href="../static/css/konami.css">
+    {% block styles %}{% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <header>
+      {% include "nav_bar.html" %}
+      <div class="title_block">
+        {% block title_block %}{% endblock %}
+      </div>
+    </header>
+    <div class="mainBody">
+      <img id="mainBodyBkgdImg" src="{% block background_imgURL %}{% endblock %}">
+      <div class="mainContent">
+        {% block pageContent%}{% endblock %}
+      </div>
+    </div>
+    <div class="konamiGame">
+      <div class="konami" id="bird">
+      </div>
+      <div class="konami pipe" id="pipeBottom">
+      </div>
+      <div class="konami pipe" id="pipeTop">
+      </div>
+      <div class="konami score">
+        <p id="score">0</p>
+      </div>
+    </div>
+    <script src="../static/scripts/base.js" charset="utf-8"></script>
+    <script src="../static/scripts/konami.js" charset="utf-8"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

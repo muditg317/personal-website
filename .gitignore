@@ -1,2 +1,6 @@
-# Google App Engine generated folder
+*.pyc
 appengine-generated/
+node_modules
+package-lock.json
+.gcloudignore
+.idea

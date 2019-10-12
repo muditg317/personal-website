@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block page_title %}TeleDrawings{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="../static/css/home.css">
+<link rel="stylesheet" href="../static/css/threadDisplay.css">
+{% endblock %}
+
+{% block title_block %}
+<h1>Hi, {{user_info.username}}! Choose a Thread</h1>
+{% endblock %}
+
+{% block background_imgURL %}../static/images/clearSheet.png{% endblock %}
+
+{% block pageContent %}
+  {% if threads|length != 0%}
+    <div class='thread_list'>
+      {% for thread in threads %}
+        {% set onclick_used = True %}
+        {% set onclick_link = "/edit?key="+thread.key.id()|string %}
+        {% set canBail = True %}
+        {% set editList = edits_by_thread[thread.key.id()|string] %}
+        {% set edit_list = editList[editList|length-1:editList|length] %}
+        {% include "threadDisplay.html" %}
+        <div class="vert_divider" style="min-width: 20px;">
+
+        </div>
+      {% endfor %}
+    </div>
+  {% elif user_info.bailOuts|length != 0 %}
+    <h3>Uh oh! You've bailed on all the threads!</h3>
+    <p>View them in the <a id="visit_mythread" href="/my-threads">My Threads</a> tab!</p>
+  {% else %}
+    <h3>There are no threads! How sad :(</h3>
+    <p>Click the link below to start a new one!</p>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src='../static/scripts/home.js'></script>
+{% endblock %}
