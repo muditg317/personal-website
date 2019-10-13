@@ -1,0 +1,40 @@
+.nav_bar {
+  overflow: auto;
+  background-color: #6adbd8;
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.logo {
+  display: inline-block;
+  vertical-align: top;
+  height: $nav-bar-height;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.nav_bar a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.nav_bar a:hover {
+  background-color: #0abab5;
+}
+
+.nav_bar a.active {
+  background-color: white;
+  color: black;
+}
+
+.nav_bar a#back_to_top {
+  /* float: right; */
+  position: absolute;
+  right: 0;
+}

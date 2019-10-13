@@ -1,3 +1,64 @@
+.nav_bar {
+  overflow: auto;
+  background-color: #6adbd8;
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.logo {
+  display: inline-block;
+  vertical-align: top;
+  height: 50px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.nav_bar a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.nav_bar a:hover {
+  background-color: #0abab5;
+}
+
+.nav_bar a.active {
+  background-color: white;
+  color: black;
+}
+
+.nav_bar a#back_to_top {
+  /* float: right; */
+  position: absolute;
+  right: 0;
+}
+
+header {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  position: relative;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.title_block {
+  position: relative;
+  max-height: 500px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
 body {
   margin: auto;
   padding: auto;
@@ -5,7 +66,7 @@ body {
   flex-flow: column nowrap;
   min-width: 700px;
   align-items: center;
-  width: 100vw;
+  width: 100%;
 }
 
 .mainBody {
@@ -16,7 +77,7 @@ body {
   flex-flow: column nowrap;
   align-items: center;
   min-width: 700px;
-  width: 100vw;
+  width: 100%;
 }
 
 #mainBodyBkgdImg {
@@ -25,7 +86,7 @@ body {
   overflow: hidden;
   object-fit: cover;
   object-position: center;
-  width:inherit;
+  width: inherit;
   height: 100%;
   /* align-self: flex-start; */
 }
@@ -35,9 +96,9 @@ body {
   top: 0;
   /* display: flex; */
   /* flex-flow: column nowrap; */
-  max-width: 98vw;
+  max-width: 100%;
   /* align-items: center; */
-  background-color: rgba(255,255,255,0);
+  background-color: rgba(255, 255, 255, 0);
 }
 
 .content {
@@ -52,3 +113,13 @@ body {
 .content > h2 {
   align-self: center;
 }
+
+.rising_button {
+  box-shadow: 5px 5px 2px grey;
+}
+
+.rising_button:hover {
+  box-shadow: 7px 7px 4px grey;
+}
+
+/*# sourceMappingURL=base.css.map */

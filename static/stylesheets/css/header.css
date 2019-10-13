@@ -1,63 +1,17 @@
-header {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
-  position: relative;
-  width: 100%;
-}
+/* Error: Undefined variable.
+ *   ,
+ * 7 |   margin-top: $nav-bar-height;
+ *   |               ^^^^^^^^^^^^^^^
+ *   '
+ *   static\stylesheets\sass\header.scss 7:15  root stylesheet */
 
-.title_block {
-  position: relative;
-  max-height: 500px;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-}
-
-
-.nav_bar {
-  overflow: auto;
-  background-color: #6adbd8;
-  display: flex;
-  position: fixed;
-  top: 0;
-  width: 100vw;
-}
-
-.logo {
-  display: inline-block;
-  vertical-align: top;
-  height: 48px;
-  padding-left: 14px;
-  padding-right: 14px;
-}
-
-.nav_bar a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.nav_bar a:hover {
-  background-color: #0abab5;
-}
-
-.nav_bar a.active {
-  background-color: white;
-  color: black;
-}
-
-.nav_bar a.active:hover {
-}
-
-.nav_bar a#back_to_top {
-  /* float: right; */
-  position: absolute;
-  right: 0;
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Undefined variable.\a   \2577 \a 7 \2502    margin-top: $nav-bar-height;\d\a   \2502                ^^^^^^^^^^^^^^^\a   \2575 \a   static\\stylesheets\\sass\\header.scss 7:15  root stylesheet";
 }

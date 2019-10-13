@@ -3,15 +3,14 @@
   <head>
     <meta charset="utf-8">
     <title>{% block page_title %}{% endblock %}</title>
-    <link rel="stylesheet" href="../static/css/base.css" />
-    <link rel="stylesheet" href="../static/css/header.css">
-    <link rel="stylesheet" href="../static/css/konami.css">
+    <link rel="stylesheet" href="../static/stylesheets/css/base.css" />
+    <link rel="stylesheet" href="../static/stylesheets/css/konami.css">
     {% block styles %}{% endblock %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
+    {% include "nav_bar.html" %}
     <header>
-      {% include "nav_bar.html" %}
       <div class="title_block">
         {% block title_block %}{% endblock %}
       </div>

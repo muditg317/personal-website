@@ -1,0 +1,16 @@
+$nav-bar-height: 50px;
+
+@import "nav_bar";
+
+@import "header";
+
+@import "body";
+
+
+.rising_button {
+    box-shadow: 5px 5px 2px grey;
+}
+
+.rising_button:hover {
+    box-shadow: 7px 7px 4px grey;
+}
