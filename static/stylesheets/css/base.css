@@ -5,6 +5,7 @@ body {
   flex-flow: column nowrap;
   min-width: 700px;
   align-items: center;
+  width: 100vw;
 }
 
 .mainBody {

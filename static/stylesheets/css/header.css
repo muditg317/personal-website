@@ -20,8 +20,11 @@ header {
 
 .nav_bar {
   overflow: auto;
-  background-color: #8DAD53;
+  background-color: #6adbd8;
   display: flex;
+  position: fixed;
+  top: 0;
+  width: 100vw;
 }
 
 .logo {
@@ -42,7 +45,7 @@ header {
 }
 
 .nav_bar a:hover {
-  background-color: #6D8D33;
+  background-color: #0abab5;
 }
 
 .nav_bar a.active {
@@ -57,8 +60,4 @@ header {
   /* float: right; */
   position: absolute;
   right: 0;
-}
-
-#mainBodyBkgdImg{
-  width: inherit;
 }

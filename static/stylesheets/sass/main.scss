@@ -1,6 +1,4 @@
-#mainBodyBkgdImg{
-  width: inherit;
-}
+
 
 .back_to_top_block {
     position: fixed;
@@ -10,10 +8,20 @@
     flex-flow: column nowrap;
     box-shadow: 5px 5px 2px grey;
     justify-content: center;
+    align-items: center;
+    padding: 10px;
+    max-width: 60px;
+    width: 60px;
 }
 
 .back_to_top_block:hover {
     right: 22px;
     bottom: 22px;
     box-shadow: 7px 7px 4px grey;
+}
+
+.back_to_top_block > p {
+    text-align: center;
+    margin: 0px;
+    margin-bottom: 10px;
 }
