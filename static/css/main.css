@@ -1,0 +1,19 @@
+#mainBodyBkgdImg{
+  width: inherit;
+}
+
+.back_to_top_block {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-flow: column nowrap;
+    box-shadow: 5px 5px 2px grey;
+    justify-content: center;
+}
+
+.back_to_top_block:hover {
+    right: 22px;
+    bottom: 22px;
+    box-shadow: 7px 7px 4px grey;
+}
