@@ -1,17 +1,69 @@
-/* Error: Undefined variable.
- *   ,
- * 7 |   margin-top: $nav-bar-height;
- *   |               ^^^^^^^^^^^^^^^
- *   '
- *   static\stylesheets\sass\header.scss 7:15  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a   \2577 \a 7 \2502    margin-top: $nav-bar-height;\d\a   \2502                ^^^^^^^^^^^^^^^\a   \2575 \a   static\\stylesheets\\sass\\header.scss 7:15  root stylesheet";
+header {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  position: relative;
+  width: 100%;
+  background-color: rgba(106, 219, 216, 0.7);
 }
+
+.title_block {
+  position: relative;
+  max-height: 500px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+#title_bkgd_img {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  opacity: 0.5;
+  vertical-align: top;
+  width: 100%;
+  max-height: inherit;
+}
+
+.title_block_inner {
+  width: 100%;
+  height: 100%;
+  max-height: inherit;
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+#title_image {
+  vertical-align: top;
+  max-height: inherit;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  opacity: 0.5;
+  background-color: white;
+}
+
+.title_content {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#title {
+  font-size: 64px;
+  z-index: 1;
+  opacity: 1;
+}
+
+/*# sourceMappingURL=header.css.map */

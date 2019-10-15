@@ -4,7 +4,7 @@ header {
   justify-content: flex-start;
   position: relative;
   width: 100%;
-  margin-top: $nav-bar-height;
+  background-color: rgba(106, 219, 216, 0.7);
 }
 
 .title_block {
@@ -16,4 +16,56 @@ header {
   align-items: center;
   justify-content: center;
   white-space: nowrap;
+  // background-color: rgba(106, 219, 216, 0.8);
+}
+
+
+#title_bkgd_img {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  opacity: 0.5;
+  vertical-align: top;
+  width: 100%;
+  // object-fit: cover;
+  max-height: inherit;
+}
+
+.title_block_inner {
+  width: 100%;
+  height: 100%;
+  max-height: inherit;
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+#title_image {
+  vertical-align: top;
+  max-height: inherit;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  opacity: 0.5;
+  background-color: white;
+  // box-shadow: 0px 0px 10px 5px rgba(255,255,255,1) inset;
+}
+
+.title_content {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#title {
+  font-size: 64px;
+  z-index: 1;
+  opacity: 1.0;
 }

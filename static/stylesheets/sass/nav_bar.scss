@@ -1,25 +1,29 @@
+$horizontal-padding: 14px;
+
 .nav_bar {
   overflow: auto;
   background-color: #6adbd8;
   display: flex;
+  align-items: center;
   position: fixed;
   top: 0;
   width: 100%;
+  min-height: $nav-bar-height;
+  z-index: 5;
 }
 
 .logo {
   display: inline-block;
-  vertical-align: top;
-  height: $nav-bar-height;
-  padding-left: 14px;
-  padding-right: 14px;
+  height: 40px;
+  padding-left: $horizontal-padding;
+  padding-right: $horizontal-padding;
 }
 
 .nav_bar a {
   float: left;
   color: #f2f2f2;
   text-align: center;
-  padding: 14px 16px;
+  padding: $horizontal-padding 2+$horizontal-padding;
   text-decoration: none;
   font-size: 17px;
 }
@@ -31,10 +35,4 @@
 .nav_bar a.active {
   background-color: white;
   color: black;
-}
-
-.nav_bar a#back_to_top {
-  /* float: right; */
-  position: absolute;
-  right: 0;
 }

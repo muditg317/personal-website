@@ -1,8 +1,19 @@
 {% extends "content_block.html" %}
 {% block content_id %}navigator{% endblock %}
 
-{% block title %}Quick links:{% endblock %}
 
 {% block content_content %}
-  <p>These are the categories:</p>
+  {% set content_items = [["who_am_i","Who am I?"],["find_me_online","Find me online!"],["projects","Projects"],["resume","Resume"]] %}
+  <div class="button_holder">
+      {% for side_index in range(2) %}
+      {% set side = ["left","right"][side_index] %}
+      <div class="button_column {{side}}">
+          {% for i in range(((content_items|length)/2)|int*side_index, ((content_items|length)/2)|int*(side_index+1))%}
+          <div class="content_link {{side}}Button" id="{{content_items[i][0]}}_button" onclick="window.location.href='#{{content_items[i][0]}}'">
+              <p>{{content_items[i][1]}}</p>
+          </div>
+          {% endfor %}
+      </div>
+      {% endfor %}
+  </div>
 {% endblock %}

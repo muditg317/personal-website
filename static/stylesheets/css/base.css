@@ -2,15 +2,17 @@
   overflow: auto;
   background-color: #6adbd8;
   display: flex;
+  align-items: center;
   position: fixed;
   top: 0;
   width: 100%;
+  min-height: 50px;
+  z-index: 5;
 }
 
 .logo {
   display: inline-block;
-  vertical-align: top;
-  height: 50px;
+  height: 40px;
   padding-left: 14px;
   padding-right: 14px;
 }
@@ -33,10 +35,10 @@
   color: black;
 }
 
-.nav_bar a#back_to_top {
-  /* float: right; */
-  position: absolute;
-  right: 0;
+.top {
+  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
 }
 
 header {
@@ -45,7 +47,7 @@ header {
   justify-content: flex-start;
   position: relative;
   width: 100%;
-  margin-top: 50px;
+  background-color: rgba(106, 219, 216, 0.7);
 }
 
 .title_block {
@@ -59,6 +61,54 @@ header {
   white-space: nowrap;
 }
 
+#title_bkgd_img {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  opacity: 0.5;
+  vertical-align: top;
+  width: 100%;
+  max-height: inherit;
+}
+
+.title_block_inner {
+  width: 100%;
+  height: 100%;
+  max-height: inherit;
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+#title_image {
+  vertical-align: top;
+  max-height: inherit;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  opacity: 0.5;
+  background-color: white;
+}
+
+.title_content {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#title {
+  font-size: 64px;
+  z-index: 1;
+  opacity: 1;
+}
+
 body {
   margin: auto;
   padding: auto;
@@ -67,6 +117,7 @@ body {
   min-width: 700px;
   align-items: center;
   width: 100%;
+  background-color: rgba(106, 219, 216, 0.7);
 }
 
 .mainBody {
@@ -94,10 +145,11 @@ body {
 .mainContent {
   position: absolute;
   top: 0;
-  /* display: flex; */
-  /* flex-flow: column nowrap; */
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
   max-width: 100%;
-  /* align-items: center; */
+  align-items: center;
   background-color: rgba(255, 255, 255, 0);
 }
 

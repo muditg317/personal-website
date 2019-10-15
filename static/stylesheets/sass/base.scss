@@ -2,6 +2,12 @@ $nav-bar-height: 50px;
 
 @import "nav_bar";
 
+.top {
+    height: $nav-bar-height;
+    min-height: $nav-bar-height;
+    max-height: $nav-bar-height;
+}
+
 @import "header";
 
 @import "body";

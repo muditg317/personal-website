@@ -1,9 +1,9 @@
 /* Error: Undefined variable.
  *    ,
- * 13 |   height: $nav-bar-height;
- *    |           ^^^^^^^^^^^^^^^
+ * 11 |   min-height: $nav-bar-height;
+ *    |               ^^^^^^^^^^^^^^^
  *    '
- *   static\stylesheets\sass\nav_bar.scss 13:11  root stylesheet */
+ *   static\stylesheets\sass\nav_bar.scss 11:15  root stylesheet */
 
 body::before {
   font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
@@ -13,5 +13,5 @@ body::before {
   padding: 1em;
   margin-bottom: 1em;
   border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a    \2577 \a 13 \2502    height: $nav-bar-height;\d\a    \2502            ^^^^^^^^^^^^^^^\a    \2575 \a   static\\stylesheets\\sass\\nav_bar.scss 13:11  root stylesheet";
+  content: "Error: Undefined variable.\a    \2577 \a 11 \2502    min-height: $nav-bar-height;\d\a    \2502                ^^^^^^^^^^^^^^^\a    \2575 \a   static\\stylesheets\\sass\\nav_bar.scss 11:15  root stylesheet";
 }

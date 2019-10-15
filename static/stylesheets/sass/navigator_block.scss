@@ -1,0 +1,35 @@
+#navigator {
+    // background-color: rgba(106, 219, 216, 0.7);
+}
+
+.button_holder {
+    display: flex;
+    width: 100%;
+    // justify-content: space-around;
+    justify-content: center;
+}
+
+.button_column {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 45%;
+    justify-content: space-between;
+}
+
+.content_link {
+    margin: 10px;
+    padding: 5px;
+    height: 12em;
+
+    border-radius: 20px;
+    border: thin solid black;
+
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.content_link:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}

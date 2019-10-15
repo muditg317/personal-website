@@ -1,24 +1,28 @@
+.content_block {
+    width: 100%;
+}
 
-
-.back_to_top_block {
+#back_to_top_block {
+    display: none;
     position: fixed;
     right: 20px;
     bottom: 20px;
-    display: flex;
+    z-index: 99;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
     padding: 10px;
     max-width: 60px;
     width: 60px;
+    cursor: pointer;
 }
 
-.back_to_top_block:hover {
+#back_to_top_block:hover {
     right: 22px;
     bottom: 22px;
 }
 
-.back_to_top_block > p {
+#back_to_top_block > p {
     text-align: center;
     margin: 0px;
     margin-bottom: 10px;
