@@ -19,14 +19,17 @@
 </div>
 {% endblock %}
 
-{% block background_imgURL %}../static/images/tiffany blue.png{% endblock %}
+{% block background_imgURL %}{% endblock %}
 
 {% block pageContent %}
   {% include "navigator_block.html" %}
   {% include "who_am_i.html" %}
-  {% include "find_me_online.html" %}
   {% include "projects.html" %}
+  {% include "find_me_online.html" %}
   {% include "resume.html" %}
+  <div class="waste_space">
+
+  </div>
   <div class="rising_button" id="back_to_top_block" onclick="goToTop()">
       <p>Back to top:</p>
       <img src="../static/images/up_arrow.png" alt="">
@@ -35,8 +38,8 @@
 
 {% block scripts %}
 <script src='../static/scripts/main.js'></script>
-<!-- <script src='../static/scripts/mavigator_block.js'></script>
-<script src='../static/scripts/who_am_i.js'></script>
+<script src='../static/scripts/navigator_block.js'></script>
+<!-- <script src='../static/scripts/who_am_i.js'></script>
 <script src='../static/scripts/projects.js'></script>
 <script src='../static/scripts/find_me_online.js'></script>
 <script src='../static/scripts/resume.js'></script> -->

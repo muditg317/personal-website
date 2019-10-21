@@ -10,7 +10,7 @@ title_block.style.width = img_width+"px";
 const header_and_navigatorBlock_height = 960;
 const bottomOffset = 20;
 const animationDistance = 125;
-const animationTime = 100;
+const animationTime = 50;
 const timeStep = 1;
 
 //Get the button:

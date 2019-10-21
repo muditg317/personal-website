@@ -10,29 +10,31 @@ $horizontal-padding: 14px;
   width: 100%;
   min-height: $nav-bar-height;
   z-index: 5;
-}
 
-.logo {
-  display: inline-block;
-  height: 40px;
-  padding-left: $horizontal-padding;
-  padding-right: $horizontal-padding;
-}
+  .logo {
+    display: inline-block;
+    height: 40px;
+    padding-left: $horizontal-padding;
+    padding-right: $horizontal-padding;
+  }
 
-.nav_bar a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: $horizontal-padding 2+$horizontal-padding;
-  text-decoration: none;
-  font-size: 17px;
-}
+  a {
+    float: left;
+    color: black; //#f2f2f2;
+    text-align: center;
+    padding: $horizontal-padding 2+$horizontal-padding;
+    text-decoration: none;
+    font-size: 17px;
+  }
 
-.nav_bar a:hover {
-  background-color: #0abab5;
-}
+  a:hover, a.active:hover {
+    background-color: #0abab5;
+  }
 
-.nav_bar a.active {
-  background-color: white;
-  color: black;
+  a.active {
+    background-color: #3acbc6;
+    color: black;
+  }
+
+
 }
