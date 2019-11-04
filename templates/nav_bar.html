@@ -1,15 +1,15 @@
 <div id="top_nav" class="nav_bar">
   <img class="logo" src="../static/images/icons/logo.png" alt="">
   <!-- ["section_id","fa fa-fw fa-iconName","section_name"] -->
-  {{% set nav_items = [
+  {% set nav_items = [
       ["who_am_i","user","Who Am I?"],
       ["projects","book","Projects"],
       ["find_me_online","globe","Find Me Online"],
       ["resume","file","Resume"]
-      ]%}}
-  {{% for section in nav_items %}}
+      ] %}
+  {% for section in nav_items %}
     <a class="nav_bar_item" id="nav_{{section[0]}}" onclick="jumpToSection('#{{section[0]}}')"><i class="fa fa-fw fa-{{section[1]}}"></i> {{section[2]}}</a>
-  {{% endfor %}}
+  {% endfor %}
   <!-- <a class="nav_bar_item" id="nav_who_am_i" onclick="jumpToSection('#who_am_i')"><i class="fa fa-fw fa-user"></i> Who Am I?</a>
   <a class="nav_bar_item" id="nav_projects" onclick="jumpToSection('#projects')"><i class="fa fa-fw fa-book"></i> Projects</a>
   <a class="nav_bar_item" id="nav_find_me_online" onclick="jumpToSection('#find_me_online')"><i class="fa fa-fw fa-globe"></i> Find Me Online</a>

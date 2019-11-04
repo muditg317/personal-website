@@ -4,11 +4,16 @@
 {% block title %}Projects{% endblock %}
 
 {% block content_content %}
-  <p>These are my projects:</p>
-  <ol>
-      <li>Garbage</li>
-      <li>Poo</li>
-      <li>Lame Stuff</li>
-      <li>Another one!</li>
-  </ol>
+  {% set projects = [
+      {
+          'id' : 'GameLounge',
+          'title' : 'Game Lounge',
+          'description' : 'This is a collection of games that I have created. I create most of these in both Processing.js and p5.js.',
+          'image' : '',
+          'link' : 'game-lounge'
+      }
+      ] %}
+  {% for project in projects %}
+    {% include "project_item.html" %}
+  {% endfor %}
 {% endblock %}

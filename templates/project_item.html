@@ -1,0 +1,17 @@
+<div class="project_item" id="{{project.id}}">
+    <div class="project_item_text">
+        <h1>
+            {% if project.link|length > 0 %}
+                <a href="/{{project.link}}">{{project.title}}</a>
+            {% else %}
+                {{project.title}}
+            {% endif %}
+        </h1>
+        <p>{{project.description}}</p>
+    </div>
+    <div class="project_item_image">
+        {% if project.image|length > 0 %}
+            <img src="../static/images/{{project.image}}" alt="">
+        {% endif %}
+    </div>
+</div>

@@ -1,3 +1,8 @@
-
+.project_item {
+  display: flex;
+}
+.project_item * {
+  flex: 50%;
+}
 
 /*# sourceMappingURL=projects.css.map */

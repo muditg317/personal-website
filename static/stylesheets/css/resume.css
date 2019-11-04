@@ -1,0 +1,13 @@
+.content_block#resume .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#resume_view {
+  width: 850px;
+  height: 1048px;
+}
+
+/*# sourceMappingURL=resume.css.map */
