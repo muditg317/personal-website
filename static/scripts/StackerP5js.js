@@ -35,8 +35,14 @@ function setup() {
   let canvas = createCanvas(462,660);
   canvas.id("stackerCanvas");
   canvasElement = document.getElementById("stackerCanvas");
-  canvasElement.addEventListener("mousedown",handleEvent);
-  canvasElement.addEventListener("touchstart",handleEvent);
+  canvasElement.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      handleEvent();
+  });
+  canvasElement.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      handleEvent();
+  });
   document.getElementById("stackerContainer").appendChild(canvasElement);
 
   marginRatio = 1/10.0;
@@ -185,7 +191,6 @@ const spawnBlock = () => {
 
 function keyPressed() {
     if (key == '1' && !gameStarted) {
-        gameStarted = true;
         handleEvent();
     }
     if (key == ' ' && gameStarted) {
