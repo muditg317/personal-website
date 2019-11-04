@@ -117,7 +117,7 @@ function draw() {
       shifting = continueShifting;
       shift = 0;
       for (let i = 0; i < rowsPerLevel && baseBlocks.length > 0; i++) {
-        baseBlocks.splice(0,1);
+        baseBlocks.splice(0,1);//[0].disable();
       }
       if (baseBlocks.length == 0) {
         lose();
@@ -183,8 +183,14 @@ const drawBackground = () => {
 };
 
 const spawnBlock = () => {
-  //let newRow = new BlockRow(Math.floor((canvasWidth-blockWidth)/2), baseBlocks[baseBlocks.length-1].y-1, blockWidth, score+1);
-  let newRow = new BlockRow(baseBlocks[baseBlocks.length-1].x, baseBlocks[baseBlocks.length-1].y-1, blockWidth, score+1);
+  let newRow;
+  newRow = new BlockRow(Math.floor(Math.random()*(canvasWidth-blockWidth)), baseBlocks[baseBlocks.length-1].y-1, blockWidth, score+1);
+  // newRow = new BlockRow(Math.floor(Math.random()*(canvasWidth-blockWidth)), 0, blockWidth, score+1);
+  // if (Math.random() < 0.5) {
+    // newRow = new BlockRow(Math.floor((canvasWidth-blockWidth)/2), baseBlocks[baseBlocks.length-1].y-1, blockWidth, score+1);
+  // } else {
+      // newRow = new BlockRow(baseBlocks[baseBlocks.length-1].x, baseBlocks[baseBlocks.length-1].y-1, blockWidth, score+1);
+  // }
   fallingBlocks.push(newRow);
 };
 
@@ -260,8 +266,8 @@ const shiftsByLevel = () => {
 };
 
 const dropsByLevel = () => {
-  //return level <= 3 ? 1f/(4-level) : level-2;
-  return 0.000001;
+  // return level <= 3 ? 1f/(4-level) : level-2;
+  return 0.0000001;
 };
 
 const shiftScreen = () => {
@@ -316,6 +322,7 @@ class BlockRow {
     this.x = x;
     this.y = y;
     this.value = value;
+    this.disabled = false;
     this.blocks = [];
     for (let i = 0; i < numBlocks; i++) {
       //console.log(margin + (this.x+i)*(size+margin*2));
@@ -324,8 +331,9 @@ class BlockRow {
       this.blocks.push(block);
     }
     this.speed = (parseInt((Math.random()*2))*2-1);
-    this.updateLRtask = setInterval(this.updateLR,(1000/shiftsPerSecond),this);
+    this.vel = (1000/shiftsPerSecond);
     //console.log(this.blocks);
+    this.updateLRtask = setInterval(this.updateLR,(1000/shiftsPerSecond),this);
     this.dropTask = setInterval(this.drop,(1000/dropsPerSecond),1,this);
   }
 
@@ -355,7 +363,10 @@ class BlockRow {
   }
 
   updateLR(self) {
-    //console.log(self);
+    // if (self.disabled) {
+    //     clearInterval(self.updateLRtask);
+    //     return;
+    // }
     let increment = self.speed;
     if (self.x+self.blocks.length+increment >= canvasWidth) {
       self.speed *= -1;
@@ -371,7 +382,11 @@ class BlockRow {
   }
 
   drop(amount,self) {
-    //console.log(amount);
+    if (self.y == baseBlocks[baseBlocks.length-1].y-2) {
+        clearInterval(self.dropTask);
+        // if (!self.disabled) {
+        // }
+    }
     self.y += amount;
     self.blocks.forEach( (block) => {
       block.y = margin + self.y*(size+margin*2);
@@ -387,6 +402,7 @@ class BlockRow {
   }
 
   disable() {
+    this.disabled = true;
     clearInterval(this.updateLRtask);
     clearInterval(this.dropTask);
   }

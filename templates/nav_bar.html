@@ -1,12 +1,7 @@
 <div id="top_nav" class="nav_bar">
   <img class="logo" src="../static/images/icons/logo.png" alt="">
   <!-- ["section_id","fa fa-fw fa-iconName","section_name"] -->
-  {% set nav_items = [
-      ["who_am_i","user","Who Am I?"],
-      ["projects","book","Projects"],
-      ["find_me_online","globe","Find Me Online"],
-      ["resume","file","Resume"]
-      ] %}
+  
   {% for section in nav_items %}
     <a class="nav_bar_item" id="nav_{{section[0]}}" onclick="jumpToSection('#{{section[0]}}')"><i class="fa fa-fw fa-{{section[1]}}"></i> {{section[2]}}</a>
   {% endfor %}

@@ -8,6 +8,15 @@
 <link rel="stylesheet" href="../static/stylesheets/css/resume.css">
 {% endblock %}
 
+{% block nav_bar_config %}
+{% set nav_items = [
+    ["who_am_i","user","Who Am I?"],
+    ["projects","book","Projects"],
+    ["find_me_online","globe","Find Me Online"],
+    ["resume","file","Resume"]
+    ] %}
+{% endblock %}
+
 {% block title_block %}
 <img id="title_bkgd_img" src="../static/images/me_bkgd.jpg" alt="blur meme"/>
 <div class="title_block_inner">

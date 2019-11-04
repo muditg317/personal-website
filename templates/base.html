@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>{% block page_title %}{% endblock %}</title>
     <link rel="stylesheet" href="../static/stylesheets/css/base.css" />
     <link rel="stylesheet" href="../static/stylesheets/css/konami.css">
     {% block styles %}{% endblock %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  </head>
-  <body>
-    {% include "nav_bar.html" %}
+</head>
+
+<body>
+    {% block nav_bar_config %}{% endblock %}
+    {% if nav_items|length > 0 %}
+        {% include "nav_bar.html" %}
+        <script src="../static/scripts/nav_bar.js" charset="utf-8"></script>
+    {% endif %}
     <div class="top" id="top">
 
     </div>
     <header>
-      <div class="title_block">
-        {% block title_block %}{% endblock %}
-      </div>
+        <div class="title_block">
+            {% block title_block %}{% endblock %}
+        </div>
     </header>
     <div class="mainBody">
-      <img id="mainBodyBkgdImg" src="{% block background_imgURL %}{% endblock %}">
-      <div class="mainContent">
-        {% block pageContent%}{% endblock %}
-      </div>
+        <img id="mainBodyBkgdImg" src="{% block background_imgURL %}{% endblock %}">
+        <div class="mainContent">
+            {% block pageContent%}{% endblock %}
+        </div>
     </div>
     <div class="konamiGame">
-      <div class="konami" id="bird">
-      </div>
-      <div class="konami pipe" id="pipeBottom">
-      </div>
-      <div class="konami pipe" id="pipeTop">
-      </div>
-      <div class="konami score">
-        <p id="score">0</p>
-      </div>
+        <div class="konami" id="bird">
+        </div>
+        <div class="konami pipe" id="pipeBottom">
+        </div>
+        <div class="konami pipe" id="pipeTop">
+        </div>
+        <div class="konami score">
+            <p id="score">0</p>
+        </div>
     </div>
     <script src="../static/scripts/base.js" charset="utf-8"></script>
-    <script src="../static/scripts/nav_bar.js" charset="utf-8"></script>
     <script src="../static/scripts/konami.js" charset="utf-8"></script>
     {% block scripts %}{% endblock %}
-  </body>
+</body>
+
 </html>

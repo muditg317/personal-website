@@ -11,8 +11,8 @@ const frameTime = 20;
 const frameCalibration = 50;
 
 const scoreDisplay = document.querySelector("#score");
-let score = 0;
-scoreDisplay.innerHTML=score;
+let konamiScore = 0;
+scoreDisplay.innerHTML=konamiScore;
 
 const gameHeight = 300;
 const gameWidth = 300;
@@ -77,8 +77,8 @@ const resetGame = () => {
   resetPipes();
   setBirdPos();
   setPipes();
-  score = 0;
-  scoreDisplay.innerHTML=score;
+  konamiScore = 0;
+  scoreDisplay.innerHTML=konamiScore;
   birdInterval = setInterval(() => {
     birdX += birdVX;
     birdY -= birdVY;
@@ -93,8 +93,8 @@ const resetGame = () => {
     pipeX += pipeV;
     if(pipeX < birdStart-20) {
       resetPipes();
-      score+=1;
-      scoreDisplay.innerHTML=score;
+      konamiScore+=1;
+      scoreDisplay.innerHTML=konamiScore;
     }
     setPipes();
   },frameTime);
