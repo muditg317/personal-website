@@ -2,7 +2,6 @@
 const recentKeys = [];
 const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "a", "b"];
 const endKonamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "z", "y"];
-let doneKonami = false;
 let konami = false;
 
 const konamiGame = document.querySelector(".konamiGame");
@@ -100,60 +99,29 @@ const resetGame = () => {
   },frameTime);
   gameInterval = setInterval(() => {
     if(checkClip()) {
-      clearInterval(birdInterval);
-      clearInterval(pipeInterval);
-      clearInterval(gameInterval);
-      alert("birdy died! :(");
-      konami = false;
+      loseKonami();
     }
   },frameTime*2);
 };
 
+const loseKonami = () => {
+    clearInterval(birdInterval);
+    clearInterval(pipeInterval);
+    clearInterval(gameInterval);
+    konami = false;
+}
+
 const executeKonami = () => {
   if(!konami) {
-    alert("konami!");
     konami = true;
     konamiGame.style.visibility = "visible";
     resetGame();
-  } else {
-    alert("more konami!!");
   }
-};
-
-const checkKonami = () => {
-  if(recentKeys.length<10) {
-    return;
-  }
-  for(let i=0;i<konamiCode.length;i++) {
-    if(recentKeys[recentKeys.length-konamiCode.length+i]!=konamiCode[i]) {
-      return;
-    }
-  }
-  executeKonami();
-  doneKonami = true;
 };
 
 const endKonami = () => {
-  if(doneKonami) {
-    alert("no more konami.. :(");
-    doneKonami = false;
-    konami = false;
+    loseKonami();
     konamiGame.style.visibility = "hidden";
-  } else {
-    alert("try some konami!!");
-  }
-};
-
-const checkEndKonami = () => {
-  if(recentKeys.length<endKonamiCode.length) {
-    return;
-  }
-  for(let i=0;i<endKonamiCode.length;i++) {
-    if(recentKeys[recentKeys.length-endKonamiCode.length+i]!=endKonamiCode[i]) {
-      return;
-    }
-  }
-  endKonami();
 };
 
 const checkCode = (code,result) => {
@@ -179,10 +147,6 @@ window.addEventListener('keydown', function (event) {
   }
   switch(event.key) {
     case " ":
-      if(konami) {
-        birdVY = jumpStrength;
-      }
-      break;
     case "ArrowUp":
       if(konami) {
         birdVY = jumpStrength;

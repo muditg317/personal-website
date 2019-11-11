@@ -1,12 +1,8 @@
 <div id="top_nav" class="nav_bar">
-  <img class="logo" src="../static/images/icons/logo.png" alt="">
+  <img class="logo" src="../static/images/icons/logo.png" alt="" onclick="navToSection('#top')">
   <!-- ["section_id","fa fa-fw fa-iconName","section_name"] -->
-  
   {% for section in nav_items %}
-    <a class="nav_bar_item" id="nav_{{section[0]}}" onclick="jumpToSection('#{{section[0]}}')"><i class="fa fa-fw fa-{{section[1]}}"></i> {{section[2]}}</a>
+    <a class="nav_bar_item" id="nav_{{section[0]}}" {% if section|length == 3 %}onclick="navToSection('#{{section[0]}}')"{% else %}href="/{{section[3]}}"{% endif %}><i class="fa fa-fw fa-{{section[1]}}"></i> {{section[2]}}</a>
   {% endfor %}
-  <!-- <a class="nav_bar_item" id="nav_who_am_i" onclick="jumpToSection('#who_am_i')"><i class="fa fa-fw fa-user"></i> Who Am I?</a>
-  <a class="nav_bar_item" id="nav_projects" onclick="jumpToSection('#projects')"><i class="fa fa-fw fa-book"></i> Projects</a>
-  <a class="nav_bar_item" id="nav_find_me_online" onclick="jumpToSection('#find_me_online')"><i class="fa fa-fw fa-globe"></i> Find Me Online</a>
-  <a class="nav_bar_item" id="nav_resume" onclick="jumpToSection('#resume')"><i class="fa fa-fw fa-file"></i> Resume</a> -->
+  <a class="menu" href="javascript:void(0);" onclick="responsiveNav()"><i class="fa fa-bars"></i></a>
 </div>

@@ -11,15 +11,8 @@
 </head>
 
 <body>
-    {% block nav_bar_config %}{% endblock %}
-    {% if nav_items|length > 0 %}
-        {% include "nav_bar.html" %}
-        <script src="../static/scripts/nav_bar.js" charset="utf-8"></script>
-    {% endif %}
-    <div class="top" id="top">
-
-    </div>
-    <header>
+    {% block nav_bar %}{% endblock %}
+    <header id="top">
         <div class="title_block">
             {% block title_block %}{% endblock %}
         </div>
@@ -41,6 +34,8 @@
             <p id="score">0</p>
         </div>
     </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="../static/scripts/utils.js" charset="utf-8"></script>
     <script src="../static/scripts/base.js" charset="utf-8"></script>
     <script src="../static/scripts/konami.js" charset="utf-8"></script>
     {% block scripts %}{% endblock %}

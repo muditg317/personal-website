@@ -30,7 +30,7 @@ scrollByAnimated = function(scrollY, duration){
 
   if (document.attachEvent) {
     //if IE (and Opera depending on user setting)
-    document.attachEvent("on"+mousewheelevt, cancelAnimation)
+    document.attachEvent("on "+mousewheelevt, cancelAnimation)
   } else if (document.addEventListener) {
     //WC3 browsers
     document.addEventListener(mousewheelevt, cancelAnimation, false)
@@ -75,13 +75,3 @@ scrollByAnimated = function(scrollY, duration){
   /*start animation*/
   step();
 };
-
-
-
-const navBarHeight = document.getElementById("top_nav").computedStyleMap().get("min-height")["value"];
-const jumpToSection = (elementSelector) => {
-    element = document.querySelector(elementSelector);
-    const elemRect = element.getBoundingClientRect();
-    scrollBy(0,elemRect.top-navBarHeight);
-    // scrollByAnimated(elemRect.top-navBarHeight, 250);// change in scroll Y, duration in ms
-}

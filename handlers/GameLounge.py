@@ -10,7 +10,8 @@ the_jinja_env = jinja2.Environment(
 
 class GameLoungePage(webapp2.RequestHandler):
     def get(self):
-        request = self.request.get("request")
-        main_template = the_jinja_env.get_template("game_lounge.html")
-        self.response.write(main_template.render({
+        displayed = self.request.get("displayed")
+        game_lounge_template = the_jinja_env.get_template("game_lounge/game_lounge.html")
+        self.response.write(game_lounge_template.render({
+            "displayed": displayed
         }))

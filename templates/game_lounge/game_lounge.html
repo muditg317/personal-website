@@ -1,0 +1,58 @@
+username{% extends "base.html" %}
+{% block page_title %}Game Lounge{% endblock %}
+
+{% block styles %}
+
+{% endblock %}
+
+{% block nav_bar %}
+{% set nav_items = [
+    ["back_home","home","Back to main", "main"]
+    ] %}
+{% include "nav_bar.html" %}
+<script src="../../static/scripts/nav_bar.js" charset="utf-8"></script>
+<div class="top" id="top"></div>
+{% endblock %}
+
+{% block title_block %}
+{% endblock %}
+
+{% block background_imgURL %}{% endblock %}
+
+{% block pageContent %}
+    <h1>Stacker</h1>
+    <p>It's just the spacebar. That's it.</p>
+    <div class="game" id="stacker">
+        <div class="gameBoard" id="stackerContainer">
+
+        </div>
+    </div>
+    <h1>Secret Hitler</h1>
+    <p>Play with some friends!</p>
+    <div class="game" id="secretHitler">
+        <form name="createHitler">
+            <input type="text" name="gameID" placeholder="Enter a name for your gameroom">
+            <input type="text" name="username" placeholder="Enter a username">
+            <input type="button" name="submit" value="Create Game!" onclick="attemptCreate()">
+        </form>
+        <form name="joinHitler">
+            <input type="text" name="gameID" placeholder="Enter a name for your gameroom">
+            <input type="text" name="username" placeholder="Enter a username">
+            <input type="hidden" name="otherUser" placeholder="Enter someone else's username">
+            <input type="button" name="submit" value="Join Game!" onclick="attemptJoin()">
+            {% if displayed %}
+                <input type="button" name="request" value="Request game entry" onclick="requestJoin()">
+            {% endif %}
+        </form>
+    </div>
+    <!-- <div class="rising_button" id="back_to_top_block" onclick="goToTop()">
+        <p>Back to top:</p>
+        <img src="../../static/images/up_arrow.png" alt="">
+    </div> -->
+{% endblock %}
+
+{% block scripts %}
+<script language="javascript" type="text/javascript" src="../../static/scripts/libraries/p5.min.js"></script>
+<script language="javascript" type="text/javascript" src="../../static/scripts/StackerP5js.js"></script>
+<script language="javascript" type="text/javascript" src="../../static/scripts/startHitler.js"></script>
+{% endblock %}

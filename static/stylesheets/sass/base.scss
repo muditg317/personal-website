@@ -8,11 +8,13 @@ $nav-bar-height: 50px;
     max-height: $nav-bar-height;
 }
 
+#top:first-of-type {
+    top: 0;
+}
+
 @import "header";
 
 @import "body";
-
-@import "content_block";
 
 .rising_button {
     box-shadow: 5px 5px 2px grey;

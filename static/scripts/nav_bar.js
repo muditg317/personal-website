@@ -1,12 +1,22 @@
-let nav_bar = document.querySelector(".nav_bar#top_nav");
-let nav_bar_items = nav_bar.querySelectorAll(".nav_bar_item");
+const top_nav = document.getElementById("top_nav");
 
-for (i = 0; i < nav_bar_items.length; i++) {
-    // nav_bar_items[i].addEventListener("click", function() {
-    //     let current = nav_bar.querySelector(".active");
-    //     if (current != null) {
-    //         current.className = current.className.replace(" active", "");
-    //     }
-    //     this.className += " active";
-    // });
+const responsiveNav = () => {
+  if (top_nav.className === "nav_bar") {
+    top_nav.className += " responsive";
+  } else {
+    top_nav.className = "nav_bar";
+  }
 }
+
+const navToSection = (elementSelector) => {
+    jumpToSection(elementSelector);
+    top_nav.className = "nav_bar";
+}
+
+const windowResizeHandler_NAV = () => {
+    if (window.innerWidth > 650) {
+        top_nav.className = "nav_bar";
+    }
+}
+
+window.addEventListener("resize", windowResizeHandler_NAV);

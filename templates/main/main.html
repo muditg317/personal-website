@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block page_title %}Mudit Gupta{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="../../static/stylesheets/css/main.css">
+<link rel="stylesheet" href="../../static/stylesheets/css/navigator_block.css">
+<link rel="stylesheet" href="../../static/stylesheets/css/projects.css">
+<link rel="stylesheet" href="../../static/stylesheets/css/resume.css">
+{% endblock %}
+
+{% block nav_bar %}
+{% set nav_items = [
+    ["who_am_i","user","Who Am I?"],
+    ["projects","book","Projects"],
+    ["find_me_online","globe","Find Me Online"],
+    ["resume","file","Resume"]
+    ] %}
+{% include "nav_bar.html" %}
+<script src="../../static/scripts/nav_bar.js" charset="utf-8"></script>
+<div class="top" id="top"></div>
+{% endblock %}
+
+{% block title_block %}
+<img id="title_bkgd_img" src="../../static/images/me_bkgd.jpg" alt="blur meme"/>
+<div class="title_block_inner">
+<img id="title_image" src="../../static/images/me_bkgd.jpg" alt="meme"/>
+<div class="title_content">
+  <h1 class="title_content_item">
+    <center id="title"> Mudit Gupta
+    </center>
+  </h1>
+</div>
+</div>
+{% endblock %}
+
+{% block background_imgURL %}{% endblock %}
+
+{% block pageContent %}
+  {% include "main/navigator_block.html" %}
+  {% include "main/who_am_i.html" %}
+  {% include "main/projects.html" %}
+  {% include "main/find_me_online.html" %}
+  {% include "main/resume.html" %}
+  <div class="waste_space">
+
+  </div>
+  <div class="rising_button" id="back_to_top_block" onclick="goToTop()">
+      <p>Back to top:</p>
+      <img src="../../static/images/up_arrow.png" alt="">
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src='../../static/scripts/main.js'></script>
+<script src='../../static/scripts/navigator_block.js'></script>
+<!-- <script src='../../static/scripts/who_am_i.js'></script> -->
+<!-- <script src='../../static/scripts/projects.js'></script> -->
+<!-- <script src='../../static/scripts/find_me_online.js'></script> -->
+<!-- <script src='../../static/scripts/resume.js'></script> -->
+{% endblock %}

@@ -1,10 +1,15 @@
-// navBar_element = document.getElementById("home");
-// navBar_element.classList.add("active")
-const title_block = document.querySelector(".title_block_inner");
-const title_img = document.querySelector("#title_image");
-let img_width = title_img.naturalWidth*500/title_img.naturalHeight;
-title_block.style.width = img_width+"px";
-
+const setTitleImageWidth = () => {
+    const title_block = document.querySelector(".title_block");
+    const title_block_inner = document.querySelector(".title_block_inner");
+    const title_img = document.querySelector("#title_image");
+    let img_width = title_img.naturalWidth*500/title_img.naturalHeight;
+    let page_width = parseInt(window.getComputedStyle(title_block).width);
+    title_block_inner.style.width = Math.min(img_width,page_width)+"px";
+}
+const windowResizeHandler_MAIN = () => {
+    setTitleImageWidth();
+}
+window.addEventListener("resize",windowResizeHandler_MAIN);
 
 
 const header_and_navigatorBlock_height = 960;
@@ -15,7 +20,7 @@ const timeStep = 1;
 
 //Get the button:
 const backToTopButton = document.getElementById("back_to_top_block");
-var shown = document.body.scrollTop > header_and_navigatorBlock_height || document.documentElement.scrollTop > header_and_navigatorBlock_height;
+let shown = document.body.scrollTop > header_and_navigatorBlock_height || document.documentElement.scrollTop > header_and_navigatorBlock_height;
 if(shown) {
     backToTopButton.style.display = "flex";
 }
@@ -66,3 +71,23 @@ const goToTop = () => {
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
+
+
+const navBarHeight = document.getElementById("top_nav").computedStyleMap().get("min-height")["value"];
+const jumpToSection = (elementSelector) => {
+    element = document.querySelector(elementSelector);
+    const elemRect = element.getBoundingClientRect();
+    scrollBy(0,elemRect.top-navBarHeight);
+}
+
+
+
+const domContentLoadedHandler_MAIN = () => {
+    setTitleImageWidth();
+}
+document.addEventListener("DOMContentLoaded", domContentLoadedHandler_MAIN);
+
+const windowLoadHandler_MAIN = () => {
+    setTitleImageWidth();
+}
+window.addEventListener("load",windowLoadHandler_MAIN);

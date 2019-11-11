@@ -1,4 +1,4 @@
-{% extends "content_block.html" %}
+{% extends "main/content_block.html" %}
 {% block content_id %}projects{% endblock %}
 
 {% block title %}Projects{% endblock %}
@@ -14,6 +14,6 @@
       }
       ] %}
   {% for project in projects %}
-    {% include "project_item.html" %}
+    {% include "main/project_item.html" %}
   {% endfor %}
 {% endblock %}
