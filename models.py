@@ -8,10 +8,16 @@ class SH_Player(ndb.Model):
     displayed = ndb.BooleanProperty(required=True)
     uniqueID = ndb.IntegerProperty(required=True)
 
+    role = ndb.StringProperty()
+    party = ndb.StringProperty()
+
+
     def as_dict(self):
         dictionary = {
             "username": self.username,
-            "displayed": self.displayed
+            "displayed": self.displayed,
+            "role": self.role,
+            "party": self.party
         }
         return dictionary
 
@@ -28,6 +34,51 @@ class SH_Game(ndb.Model):
     state = ndb.StringProperty(required=True,default="INIT")
     updates = ndb.StringProperty(repeated=True)
     requests = ndb.StringProperty(repeated=True)
+    votes = ndb.StringProperty(repeated=True)
+    voted = ndb.StringProperty(repeated=True)
+    presidentIndex = ndb.IntegerProperty()
+    consecutiveDowns = ndb.IntegerProperty()
+
+    def applyRoles(self):
+        numPlayers = len(self.players)
+        if numPlayers % 2 == 0:
+            numFascists = (numPlayers / 2) - 1
+        else:
+            numFascists = numPlayers / 2
+        numLiberals = numPlayers - numFascists
+        roles = ["fascist"]*numFascists + ["liberal"]*numLiberals
+        random.shuffle(roles)
+        while True:
+            hitlerIndex = random.randint(0,numPlayers)
+            if roles[hitlerIndex] == "fascist":
+                break
+        for i in range(numPlayers):
+            self.players[i].party = roles[i]
+            self.players[i].role = roles[i] if i != hitlerIndex else "hitler"
+
+    def getVoteResult(self):
+        numPlayers = len(self.players)
+        numYesses = self.votes.count("yes")
+        numNos = self.votes.count("no")
+        if numYesses+numNos < numPlayers:
+            return False,False
+        if numYesses > numNos:
+            return True,True
+        return True,False
+
+    def passPolicy(self, policy):
+        if policy == "liberal":
+            self.numLiberalPassed += 1
+        else:
+            self.numFascistPassed += 1
+
+    def makePolicySet(self):
+        if len(self.policies) < 3:
+            self.policies += self.discard
+            self.discard = []
+        self.shufflePolicies()
+        self.policySet = self.policies[0:3]
+        self.policies[0:3] = []
 
     @staticmethod
     def getDefaultPolicies():
@@ -39,7 +90,7 @@ class SH_Game(ndb.Model):
     def defaultGame(gameID,players):
         policyList = ["liberal"]*6 + ["fascist"]*11
         random.shuffle(policyList)
-        return SH_Game(gameID=gameID,players=players,policies=policyList,discard=[],policySet=[])
+        return SH_Game(gameID=gameID,players=players,policies=policyList)
 
     def shufflePolicies(self):
         random.shuffle(self.policies)
@@ -51,12 +102,16 @@ class SH_Game(ndb.Model):
             "discard": self.discard,
             "numLiberalPassed": self.numLiberalPassed,
             "numFascistPassed": self.numFascistPassed,
-            "president": self.president,
-            "chancellor": self.chancellor,
+            "president": None if self.president == None else self.president.as_dict(),
+            "chancellor": None if self.chancellor == None else self.chancellor.as_dict(),
             "policySet": self.policySet,
             "state": self.state,
             "updates": self.updates,
-            "requests": self.requests
+            "requests": self.requests,
+            "votes": self.votes,
+            "voted": self.voted,
+            "presidentIndex": self.presidentIndex,
+            "consecutiveDowns": self.consecutiveDowns
         }
         players = []
         for player in self.players:
