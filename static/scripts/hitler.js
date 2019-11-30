@@ -1,9 +1,11 @@
-let gameID = document.querySelector("#gameID").textContent;
-let username = document.querySelector("#username").textContent;
-let others = document.querySelector("#others").textContent;
-// let gameJSON = document.querySelector("#gameJSON").textContent;
-// let game = JSON.parse(gameJSON);
-// console.log(gameJSON);
+// (function(window, undefined){
+const dataBox = document.querySelector("#web_data");
+const HITLER_SECRET = document.querySelector("#secret").textContent;
+dataBox.removeChild(document.querySelector("#secret"));
+
+const gameID = document.querySelector("#gameID").textContent;
+const username = document.querySelector("#username").textContent;
+let me;
 
 let actionBox = document.querySelector("#actionBox");
 
@@ -15,9 +17,31 @@ let handledUpdates = [];
 let requestBox = document.querySelector("#requestBox");
 let acknowledgedRequestIDs = [];
 
+const tempDisableButton = (button) => {
+    button.disabled = true;
+    button.style.backgroundColor = "rgb(80,80,80)"
+    setTimeout(() => {
+        button..style.backgroundColor = "rgba(255,255,255,0)";
+        button.disabled = false;
+    }, 2000);
+}
+
 let playerButtonEvent = (name) => {
     console.log(name);
 }
+const playerChooserButtonEvent = (name, button) => {
+    playerButtonEvent(name);
+    console.log(button);
+    tempDisableButton(button);
+}
+const resetPlayerChooser = () => {
+    choosePlayerPrompt.innerText = "Select a player:";
+    choosePlayerSection.style.display = "none";
+    playerButtonEvent = (name) => {
+        console.log(name);
+    }
+}
+
 
 
 const makeStartButton = () => {
@@ -42,11 +66,11 @@ const makeStartButton = () => {
                 type: "STARTGAME"
             };
             postHitlerData(data);
-            actionBox.removeChild(startAction);
+            tempDisableButton(startButton);
         };
     }
 }
-const handlePlayerJoin = (update, numPlayers) => {
+const handlePlayerJoin = (update) => {
     let name = update.substring(10);
     if (name != username) {
         let button = document.createElement("BUTTON");
@@ -54,14 +78,14 @@ const handlePlayerJoin = (update, numPlayers) => {
         button.id = name;
         button.innerText = name;
         button.onclick = (e) => {
-            playerButtonEvent(name);
+            playerChooserButtonEvent(name, button);
         };
         playerButtonBox.appendChild(button);
         gameLog(name + " joined the game.");
     } else {
         gameLog("You joined the game!");
     }
-    if (numPlayers > 2) {
+    if (playerButtonBox.childElementCount + 1 >= 5) {
         makeStartButton();
     }
 }
@@ -79,37 +103,34 @@ const handleGameStarted = (update) => {
     }
 }
 
-const handleRolesGiven = (update, players) => {
-    let me;
-    players.forEach( (player) => {
-        if (player.username == username) {
-            me = player;
-        }
-    });
-    let hitlerIndex;
-    let comrades = [];
-    players.forEach( (player,index) => {
-        if (player.username != username) {
-            if (player.party == "fascist") {
-                if (player.role == "hitler") {
-                    hitlerIndex = index;
-                } else {
-                    comrades.push(player.username);
-                }
-            }
-        }
-    });
+const setChooseFirstPresButtons = () => {
+    choosePlayerPrompt.innerText = "Select someone to be the first president:";
+    choosePlayerSection.style.display = "";
+    playerButtonEvent = (name) => {
+        let data = {
+            type: "PICKPRESIDENT DOCONFIRM",
+            name: name,
+        };
+        postHitlerData(data);
+    };
+}
+const handleRolesGiven = (update) => {
     if (me.party == "liberal") {
         gameLog("Welcome liberal! Good luck finding Hitler :)");
     } else if (me.role == "hitler") {
-        if (comrades.length == 1) {
-            gameLog("Welcome Hitler! "+comrade[0]+" is here to help!");
+        if (update.includes("+FASCIST+")) {
+            let comrade = update.substring(update.indexOf("+FASCIST+")+9)
+            gameLog("Welcome Hitler! "+comrade+" is here to help!");
         } else {
             gameLog("Welcome Hitler! Good luck finding your fascists! Don't die :P");
         }
     } else {
         gameLog("Welcome fascist! Support Hitler, but be ready to sacrifice!");
-        if (comrades.length > 1) {
+        let comradeString = update.substring(10,update.indexOf("HITLER"));
+        let comrades = comradeString.split("+FASCIST+").filter( (value, index, arr) => {
+            return value != me.username;
+        });
+        if (comrades.length > 1 || comrades.length == 1 && comrades[0].length > 0) {
             let welcomeString = "Welcome your comrades:";
             comrades.forEach( (comrade,index) => {
                 if (index != 0 && comrades.length != 2) {
@@ -122,19 +143,11 @@ const handleRolesGiven = (update, players) => {
             });
             gameLog(welcomeString+"!");
         }
-        gameLog(players[hitlerIndex].username + " is your fearless leader Hitler!");
+        let hitler = update.substring(update.indexOf("HITLER")+6);
+        gameLog(hitler + " is your fearless leader Hitler!");
     }
     gameLog("Now just one of you, tap someone's button to make them the starting president.");
-    choosePlayerPrompt.innerText = "Select someone to be the first president:";
-    choosePlayerSection.style.display = "";
-    playerButtonEvent = (name) => {
-        let data = {
-            type: "PICKPRESIDENT DOCONFIRM",
-            name: name,
-        };
-        postHitlerData(data);
-        choosePlayerSection.style.display = "none";
-    };
+    setChooseFirstPresButtons();
 }
 
 const handlePresidentChosen = (update) => {
@@ -145,13 +158,20 @@ const handlePresidentChosen = (update) => {
     } else {
         gameLog(picker + " requested for " + requestedPresident + " to be president.");
     }
-    choosePlayerPrompt.innerText = "Select a player:";
-    choosePlayerSection.style.display = "none";
-    playerButtonEvent = (name) => {
-        console.log(name);
-    }
+    resetPlayerChooser();
 }
 
+const setChooseChancellorButtons = () => {
+    choosePlayerPrompt.innerText = "Select your chancellor:";
+    choosePlayerSection.style.display = "";
+    playerButtonEvent = (name) => {
+        let data = {
+            type: "CHANCELLORCHOSEN",
+            chancellor: name
+        };
+        postHitlerData(data);
+    }
+}
 const handlePresidentElected = (update) => {
     let continueAction = document.querySelector("#continueAction");
     if (continueAction != null) {
@@ -183,17 +203,7 @@ const handlePresidentElected = (update) => {
     }
     if (newPresident == username) {
         gameLog("Choose your chancellor!")
-        choosePlayerPrompt.innerText = "Select your chancellor:";
-        choosePlayerSection.style.display = "";
-        playerButtonEvent = (name) => {
-            let data = {
-                type: "CHOOSECHANCELLOR",
-                chosen: name,
-                president: username
-            };
-            postHitlerData(data);
-            choosePlayerSection.style.display = "none";
-        }
+        setChooseChancellorButtons();
     } else {
         gameLog(newPresident + " is choosing someone to be chancellor.");
     }
@@ -208,22 +218,12 @@ const sendVote = (decision, chancellor, president) => {
     };
     postHitlerData(data);
 }
-const handleVoteNow = (update) => {
-    let chancellor = update.substring(7,update.indexOf("BY"));
-    let president = update.substring(update.indexOf("BY")+2);
-    if (chancellor == username) {
-        chancellor = "You";
-    }
-    if (president == username) {
-        president = "You";
-        choosePlayerSection.style.display = "none";
-    }
-    gameLog(president + " selected " + chancellor.toLowerCase() + " as chancellor. Vote now!");
+const setVoteButtons = (chancellor, president, chanceStr, presStr) => {
     let action = document.createElement("DIV");
     action.className = "action";
-    action.id = "voteFor"+update.substring(7,update.indexOf("BY"));
+    action.id = "voteFor"+chancellor;
     let title = document.createElement("P");
-    title.innerText = president + " choosing " + chancellor.toLowerCase();
+    title.innerText = presStr + " choosing " + chanceStr;
     action.appendChild(title);
     let buttonBox = document.createElement("DIV");
     buttonBox.className = "buttonBox";
@@ -240,14 +240,33 @@ const handleVoteNow = (update) => {
     noButton.innerText = "Nein! (no)";
 
     yesButton.onclick = (e) => {
-        sendVote("yes",update.substring(7,update.indexOf("BY")),update.substring(update.indexOf("BY")+2));
-        actionBox.removeChild(action);
+        sendVote("yes",chancellor,president);
+        tempDisableButton(yesButton);
     }
     noButton.onclick = (e) => {
-        sendVote("no",update.substring(7,update.indexOf("BY")),update.substring(update.indexOf("BY")+2));
-        actionBox.removeChild(action);
+        sendVote("no",chancellor,president);
+        tempDisableButton(noButton);
     }
     actionBox.appendChild(action);
+}
+const handleVoteNow = (update, doLog = true) => {
+    let chancellor = update.substring(7,update.indexOf("BY"));
+    let president = update.substring(update.indexOf("BY")+2);
+    let chanceStr = chancellor;
+    let presStr = president;
+    if (chancellor == username) {
+        chanceStr = "you";
+    }
+    if (president == username) {
+        presStr = "You";
+        resetPlayerChooser();
+    }
+    if (me.alive) {
+        setVoteButtons(chancellor, president, chanceStr, presStr);
+        gameLog(presStr + " selected " + chanceStr + " as chancellor. Vote now!", doLog);
+    } else {
+        gameLog(presStr + " selected " + chanceStr + " as chancellor. Everyone is voting!", doLog);
+    }
 }
 
 const handleVoteSent = (update) => {
@@ -286,6 +305,9 @@ const handleChancellorElected = (update) => {
         actionBox.removeChild(voteAction);
     }
 }
+const handleHitlerElected = (update) => {
+    gameLog("Hitler was elected as chancellor!!");
+}
 
 const handleChancellorFailed = (update) => {
     let newChancellor = update.substring(14,update.indexOf("BY"));
@@ -323,71 +345,37 @@ const discardPolicy = (policy) => {
     };
     postHitlerData(data);
 }
-const handlePresidentChoosingPolicy = (update) => {
+const createPresidentDiscardButtons = (policies) => {
+    let action = document.createElement("DIV");
+    action.className = "action";
+    action.id = "policyDiscard"
+    let title = document.createElement("P");
+    title.innerText = "Choose one to discard:";
+    action.appendChild(title);
+    let buttonBox = document.createElement("DIV");
+    buttonBox.className = "buttonBox";
+    action.appendChild(buttonBox);
+    policies.forEach( (policy) => {
+        let button = document.createElement("BUTTON");
+        button.className = "hitlerButton";
+        buttonBox.appendChild(button);
+        button.className += " policy";
+        button.innerText = policy;
+        button.onclick = (e) => {
+            discardPolicy(policy);
+            tempDisableButton(button);
+        }
+    });
+    actionBox.appendChild(action);
+}
+const handlePresidentChoosingPolicy = (update, doLog = true) => {
     let president = update.substring(21,update.indexOf("POLICIES"));
     let policies = getPoliciesFromSetString(update.substring(update.indexOf("POLICIES")+8))
     if (president == username) {
-        gameLog("You need to pick a policy to discard. These are your policies: " + policies.join(", "));
-        let action = document.createElement("DIV");
-        action.className = "action";
-        action.id = "policyDiscard"
-        let title = document.createElement("P");
-        title.innerText = "Choose one to discard:";
-        action.appendChild(title);
-        let buttonBox = document.createElement("DIV");
-        buttonBox.className = "buttonBox";
-        action.appendChild(buttonBox);
-        policies.forEach( (policy) => {
-            let button = document.createElement("BUTTON");
-            button.className = "hitlerButton";
-            buttonBox.appendChild(button);
-            button.className += " policy";
-            button.innerText = policy;
-            button.onclick = (e) => {
-                discardPolicy(policy);
-                actionBox.removeChild(action);
-            }
-        });
-        actionBox.appendChild(action);
+        gameLog("You need to pick a policy to discard. These are your policies: " + policies.join(", "), doLog);
+        createPresidentDiscardButtons(policies);
     } else {
-        gameLog("The president is choosing a policy to discard now.");
-    }
-}
-const enactPolicy = (policy) => {
-    let data = {
-        type: "ENACTPOLICY",
-        policy: policy
-    };
-    postHitlerData(data);
-}
-const handleChancellorChoosingPolicy = (update) => {
-    let chancellor = update.substring(22,update.indexOf("POLICIES"));
-    let policies = getPoliciesFromSetString(update.substring(update.indexOf("POLICIES")+8))
-    if (chancellor == username) {
-        gameLog("You need to pick a policy to enact. These are your policies: " + policies.join(", "));
-        let action = document.createElement("DIV");
-        action.className = "action";
-        action.id = "policyEnact";
-        let title = document.createElement("P");
-        title.innerText = "Choose one to enact:";
-        action.appendChild(title);
-        let buttonBox = document.createElement("DIV");
-        buttonBox.className = "buttonBox";
-        action.appendChild(buttonBox);
-        policies.forEach( (policy) => {
-            let button = document.createElement("BUTTON");
-            button.className = "hitlerButton";
-            buttonBox.appendChild(button);
-            button.className += " policy";
-            button.innerText = policy;
-            button.onclick = (e) => {
-                enactPolicy(policy);
-                actionBox.removeChild(action);
-            }
-        });
-        actionBox.appendChild(action);
-    } else {
-        gameLog("The chancellor is choosing a policy to enact now.");
+        gameLog("The president is choosing a policy to discard now.", doLog);
     }
 }
 
@@ -403,7 +391,134 @@ const handlePolicyDiscard = (update) => {
     gameLog(president + " discarded a policy.");
 }
 
+const enactPolicy = (policy) => {
+    let data = {
+        type: "ENACTPOLICY",
+        policy: policy
+    };
+    postHitlerData(data);
+}
+const createChancellorEnactButtons = (policies) => {
+    let action = document.createElement("DIV");
+    action.className = "action";
+    action.id = "policyEnact";
+    let title = document.createElement("P");
+    title.innerText = "Choose one to enact:";
+    action.appendChild(title);
+    let buttonBox = document.createElement("DIV");
+    buttonBox.className = "buttonBox";
+    action.appendChild(buttonBox);
+    policies.forEach( (policy) => {
+        let button = document.createElement("BUTTON");
+        button.className = "hitlerButton";
+        buttonBox.appendChild(button);
+        button.className += " policy";
+        button.innerText = policy;
+        button.onclick = (e) => {
+            enactPolicy(policy);
+            tempDisableButton(button);
+        }
+    });
+    actionBox.appendChild(action);
+}
+const handleChancellorChoosingPolicy = (update, doLog = true) => {
+    let chancellor = update.substring(22,update.indexOf("POLICIES"));
+    let policies = getPoliciesFromSetString(update.substring(update.indexOf("POLICIES")+8))
+    if (chancellor == username) {
+        gameLog("You need to pick a policy to enact. These are your policies: " + policies.join(", "), doLog);
+        createChancellorEnactButtons(policies);
+    } else {
+        gameLog("The chancellor is choosing a policy to enact now.", doLog);
+    }
+}
+
+const createVetoButton = (policy) => {
+    let vetoAction = document.querySelector("#vetoAction");
+    if (vetoAction == null) {
+        vetoAction = document.createElement("DIV");
+        vetoAction.id = "vetoAction";
+        actionBox.appendChild(vetoAction);
+        let vetoTitle = document.createElement("P");
+        vetoTitle.innerText = `Do you want to veto the ${policy} policy?`;
+        vetoAction.appendChild(vetoTitle);
+        let buttonBox = document.createElement("DIV");
+        buttonBox.className = "buttonBox";
+        let vetoButton = document.createElement("BUTTON");
+        buttonBox.appendChild(vetoButton);
+        let noButton = document.createElement("BUTTON");
+        buttonBox.appendChild(noButton);
+        vetoAction.appendChild(buttonBox);
+        vetoButton.className = "hitlerButton";
+        vetoButton.id = "vetoButton";
+        vetoButton.innerText = "VETO!";
+        vetoButton.onclick = (e) => {
+            let data = {
+                type: "SENDVETO",
+                veto: "veto",
+                policy: policy
+            };
+            postHitlerData(data);
+            tempDisableButton(vetoButton);
+        };
+        noButton.className = "hitlerButton";
+        noButton.id = "noButton";
+        noButton.innerText = "Let it pass.";
+        noButton.onclick = (e) => {
+            let data = {
+                type: "SENDVETO",
+                veto: "pass",
+                policy: policy
+            };
+            postHitlerData(data);
+            tempDisableButton(noButton);
+        };
+    }
+}
+const handleOfferVeto = (update) => {
+    let presidentIndex = update.indexOf("PRESIDENT");
+    let chancellorIndex = update.indexOf("CHANCELLOR");
+    let policy = update.substring(9, presidentIndex);
+    let president = update.substring(presidentIndex+9, chancellorIndex);
+    let chancellor = update.substring(chancellorIndex+10);
+    if (me.username != president && me.username != chancellor) {
+        gameLog(`A ${policy} policy is about to be passed. President ${president} and chancellor ${chancellor} are deciding if they wish to veto.`);
+    } else {
+        gameLog(`A ${policy} policy is about to be passed. You may veto if you want to.`);
+        createVetoButton(policy);
+    }
+}
+
+const removeVetoAction = () => {
+    let vetoAction = document.querySelector("#vetoAction");
+    if (vetoAction != null) {
+        actionBox.removeChild(vetoAction);
+    }
+}
+const handleVetoSent = (update) => {
+    let params = update.substring(8).split("|");
+    let player = params[0];
+    let playerStr = player;
+    let policy = params[1];
+    let veto = params[2];
+    if (player == me.username) {
+        removeVetoAction();
+        playerStr = "You";
+    }
+    if (veto == "veto") {
+        gameLog(`${playerStr} vetoed the ${policy} policy.`);
+    } else {
+        gameLog(`${playerStr} is letting the ${policy} policy pass.`);
+    }
+}
+
+const handlePolicyVetoed = (update) => {
+    removeVetoAction();
+    policy = update.substring(10);
+    gameLog(`The ${policy} policy was vetoed! Keep playing.`);
+}
+
 const handlePolicyPass = (update, forced) => {
+    removeVetoAction();
     let policy = update.substring(10,update.indexOf("BY"));
     if (forced) {
         policy = policy.substring(7)
@@ -425,10 +540,166 @@ const handlePolicyPass = (update, forced) => {
     }
 }
 
+const handlePoliciesShuffled = (update) => {
+    let details = update.split("|")[1];
+    let indexL = details.indexOf("L");
+    let indexF = details.indexOf("F");
+    let numLiberalPolicies = parseInt(details.substring(indexL+1,indexF));
+    let numFascistPolicies = parseInt(details.substring(indexF+1));
+    gameLog(`The policies were shuffled. There are ${numLiberalPolicies} liberal policies and ${numFascistPolicies} fascist policies remaining.`);
+}
+
+const handlePeekPower = (power) => {
+    if (!power.includes("|PRES|")) {
+        gameLog("The president is peeking at the top three policies.");
+        return;
+    }
+    let peek = power.substring(10);
+    let policies = peek.split(",,");
+    let revealString = policies.join(", ");
+    revealString = revealString.substring(0,revealString.lastIndexOf(", ")+2) + "and " + policies[policies.length-1];
+    gameLog(`The next three policies are ${revealString}.`)
+}
+const handleInvestigatePower = (power) => {
+    if (!power.includes("|PRES|")) {
+        gameLog("The president is choosing someone to investigate.");
+        return;
+    }
+    choosePlayerPrompt.innerText = "Select someone to investigate:";
+    choosePlayerSection.style.display = "";
+    playerButtonEvent = (name) => {
+        let data = {
+            type: "INVESTIGATE",
+            choice: name
+        };
+        postHitlerData(data);
+    }
+}
+const handleSpecialElectionPower = (power) => {
+    if (!power.includes("|PRES|")) {
+        gameLog("The president is choosing the next president.");
+        return;
+    }
+    choosePlayerPrompt.innerText = "Select someone to be the next president:";
+    choosePlayerSection.style.display = "";
+    playerButtonEvent = (name) => {
+        let data = {
+            type: "SPECIALELECTION",
+            president: name
+        };
+        postHitlerData(data);
+    }
+}
+const handleKillPower = (power) => {
+    if (!power.includes("|PRES|")) {
+        gameLog("The president is choosing someone to kill.");
+        return;
+    }
+    choosePlayerPrompt.innerText = "Select someone to kill:";
+    choosePlayerSection.style.display = "";
+    playerButtonEvent = (name) => {
+        let data = {
+            type: "KILL",
+            victim: name
+        };
+        postHitlerData(data);
+    }
+}
+const handleVetoEnabledPower = (power) => {
+    gameLog("Veto power has been unlocked!");
+}
+const handleNukePower = (power) => {
+    if (!power.includes("|PRES|")) {
+        gameLog("The president is choosing where to drop a nuke!");
+        return;
+    }
+    choosePlayerPrompt.innerText = "Select where to drop a nuke:";
+    choosePlayerSection.style.display = "";
+    playerButtonEvent = (name) => {
+        let data = {
+            type: "NUKE",
+            victim: name
+        };
+        postHitlerData(data);
+    }
+}
+const handlePower = (update) => {
+    let power = update.substring(6);
+    if (power.includes("PEEK")) {
+        handlePeekPower(power);
+    } else if (power.includes("INVESTIGATE")) {
+        handleInvestigatePower(power);
+    } else if (power.includes("SPECIALELECTION")) {
+        handleSpecialElectionPower(power);
+    } else if (power.includes("KILL")) {
+        handleKillPower(power);
+    } else if (power.includes("VETOENABLED")) {
+        handleVetoEnabledPower(power);
+    } else if (power.includes("NUKE")) {
+        handleNukePower(power);
+    }
+}
+
+const handleInvestigationResult = (powerResult) => {
+    let investigationUpdate = powerResult.split("|")
+    let player = investigationUpdate[1];
+    if (!investigationUpdate.includes("PRES")) {
+        gameLog(`The president chose to investigate ${player}`);
+        return;
+    }
+    resetPlayerChooser();
+    let party = investigationUpdate[3];
+    gameLog(`${player} is a ${party}. Are you gonna spill the beans or lie??`);
+}
+const handleSpecialElectionResult = (powerResult) => {
+    let electionUpdate = powerResult.split("|")
+    let president = investigationUpdate[1];
+    gameLog(`${president} was elected in the special election!`);
+    if (powerResult.includes("|PRES|")) {
+        resetPlayerChooser();
+    }
+}
+const handleKillResult = (powerResult) => {
+    let killUpdate = powerResult.split("|")
+    let victim = killUpdate[1];
+    gameLog(`${victim} was assassinated!`);
+    if (powerResult.includes("|PRES|")) {
+        resetPlayerChooser();
+    }
+}
+const handleNukedResult = (powerResult) => {
+    let nukeUpdate = powerResult.split("|")
+    let victims = nukeUpdate[1].split(",,");
+    let nukedString = policies.join(", ");
+    nukedString = nukedString.substring(0,nukedString.lastIndexOf(", ")+2) + "and " + victims[victims.length-1];
+    gameLog(`${nukedString} were hit by the nuke!`);
+    if (powerResult.includes("|PRES|")) {
+        resetPlayerChooser();
+    }
+}
+const handlePowerResult = (update) => {
+    let powerResult = update.substring(12);
+    if (powerResult.includes("INVESTIGATION")) {
+        handleInvestigationResult(powerResult);
+    } else if (powerResult.includes("SPECIALELECTION")) {
+        handleSpecialElectionResult(powerResult);
+    } else if (powerResult.includes("ASSASSINATION")) {
+        handleKillResult(powerResult);
+    } else if (powerResult.includes("NUKED")) {
+        handleNukedResult(powerResult);
+    }
+}
+const handleHitlerKilled = (update) => {
+    gameLog("Hitler was assassinated!");
+}
+
 const handleRoundComplete = (update) => {
     let numLiberalPassed = update.substring(13,update.indexOf("FFF"));
     let numFascistPassed = update.substring(update.indexOf("FFF")+3);
     gameLog("Round completed.<br>Liberal policies: " + numLiberalPassed + "<br>Fascist policies: " + numFascistPassed);
+}
+
+const createRoundContinueButton = () => {
     let continueAction = document.querySelector("#continueAction");
     if (continueAction == null) {
         continueAction = document.createElement("DIV");
@@ -450,60 +721,174 @@ const handleRoundComplete = (update) => {
                 type: "BEGINROUND"
             };
             postHitlerData(data);
-            actionBox.removeChild(continueAction);
+            tempDisableButton(continueButton);
         };
+    }
+}
+const handleNextRoundOffered = (update) => {
+    if (me.alive) {
+        createRoundContinueButton();
+    }
+}
+
+const handleGameWin = (update) => {
+    let party = update.substring(4).toLowerCase();
+    let won = party == me.party;
+    if (won) {
+        gameLog(`Your team won!! AYYYY!`);
+    } else {
+        gameLog(`The ${party}s won. Big oof.`);
+    }
+}
+
+const handleGameOver = (update) => {
+    if (me.role != "fascist") {
+        let exposeString = update.substring(update.indexOf("+")+1);
+        let exposures = exposeString.split("PLAYER");
+        exposures.forEach( (exposure) => {
+            let indexPipe = exposure.indexOf("||");
+            let player = exposure.substring(0,indexPipe);
+            if (player != me.username) {
+                let role = exposure.substring(indexPipe+2);
+                let hitler = role == "hitler";
+                if (hitler) {
+                    gameLog(`${player} was Hitler!`);
+                } else {
+                    gameLog(`${player} was a ${role}`);
+                }
+            }
+        });
     }
 }
 
 
-const handleUpdates = (game) => {
+let prevUpdated;
+let expectingUpdate = "";
+let responseExpectors = ["PICKPRESIDENT DOCONFIRM", "CHANCELLORCHOSEN", "VOTE",     "DISCARDPOLICY", "ENACTPOLICY", "BEGINROUND"];
+let expectedResponse =  ["PRESIDENTCHOOSE",         "VOTENOW",          "VOTESENT", "POLICYDISCARD", "POLICYPASS",  "PRESIDENTELECT"];
+const handleUpdate = (update) => {
+    if (expectedResponse.includes(expectingUpdate)) {
+        if (expectingUpdate != "VOTESENT" || expectingUpdate.endsWith("BY"+me.username)) {
+            expectingUpdate = "";
+        }
+    }
+    if (update.includes("PLAYERJOIN")) {
+        handlePlayerJoin(update);
+    } else if (update.includes("GAMESTARTED")) {
+        handleGameStarted(update);
+    } else if (update.includes("ROLESGIVEN")) {
+        handleRolesGiven(update);
+    } else if (update.includes("PRESIDENTCHOOSE")) {
+        handlePresidentChosen(update);
+    } else if (update.includes("PRESIDENTELECT")) {
+        handlePresidentElected(update);
+    } else if (update.includes("VOTENOW")) {
+        handleVoteNow(update);
+    } else if (update.includes("VOTESENT")) {
+        handleVoteSent(update);
+    } else if (update.includes("CHANCELLORELECT")) {
+        handleChancellorElected(update);
+    } else if (update.includes("HITLERELECT")) {
+        handleHitlerElected(update);
+    } else if (update.includes("CHANCELLORFAIL")) {
+        handleChancellorFailed(update);
+    } else if (update.includes("PRESIDENTPOLICYCHOOSE")) {
+        handlePresidentChoosingPolicy(update);
+    } else if (update.includes("POLICYDISCARD")) {
+        handlePolicyDiscard(update);
+    } else if (update.includes("CHANCELLORPOLICYCHOOSE")) {
+        handleChancellorChoosingPolicy(update);
+    } else if (update.includes("OFFERVETO")) {
+        handleOfferVeto(update);
+    } else if (update.includes("VETOSENT")) {
+        handleVetoSent(update);
+    } else if (update.includes("POLICYVETO")) {
+        handlePolicyVetoed(update);
+    } else if (update.includes("POLICYPASS")) {
+        handlePolicyPass(update,update.includes("FORCED"));
+    } else if (update.includes("POLICIESSHUFFLED")) {
+        handlePoliciesShuffled(update);
+    } else if (update.includes("POWER-")) {
+        handlePower(update);
+    } else if (update.includes("POWERRESULT-")) {
+        handlePowerResult(update);
+    } else if (update.includes("HITLERKILL")) {
+        handleHitlerKilled(update);
+    } else if (update.includes("ROUNDCOMPLETE")) {
+        handleRoundComplete(update);
+    } else if (update.includes("OFFERNEXTROUND")) {
+        handleNextRoundOffered(update);
+    } else if (update.includes("WIN-")) {
+        handleGameWin(update);
+    } else if (update.includes("GAMEOVER+")) {
+        handleGameOver(update);
+    } else {
+        console.log("OOF unknown update");
+    }
+}
+const handleUpdates = (updates) => {
     let started = false;
-    if (handledUpdates.length > game["updates"].length) {
+    if (handledUpdates.length > updates.length) {
+        for (let i = updates.length; i < handledUpdates.length; i++) {
+            console.log(handledUpdates[i]);
+        }
         document.location.reload(true);
     }
-    game["updates"].forEach( (update) => {
+    console.log(updates.slice(-20));
+    let updated = false;
+    updates.forEach( (update, index, array) => {
         if (update.includes("PLAYERJOIN")) {
             started = false;
         } else if (update.includes("GAMESTARTED")) {
             started = true;
         }
         if (!handledUpdates.includes(update)) {
-            if (update.includes("PLAYERJOIN")) {
-                handlePlayerJoin(update,game["players"].length);
-            } else if (update.includes("GAMESTARTED")) {
-                handleGameStarted(update);
-            } else if (update.includes("ROLESGIVEN")) {
-                handleRolesGiven(update,game["players"]);
-            } else if (update.includes("PRESIDENTCHOOSE")) {
-                handlePresidentChosen(update);
-            } else if (update.includes("PRESIDENTELECT")) {
-                handlePresidentElected(update);
-            } else if (update.includes("VOTENOW")) {
-                handleVoteNow(update);
-            } else if (update.includes("VOTESENT")) {
-                handleVoteSent(update);
-            } else if (update.includes("CHANCELLORELECT")) {
-                handleChancellorElected(update);
-            } else if (update.includes("CHANCELLORFAIL")) {
-                handleChancellorFailed(update);
-            } else if (update.includes("PRESIDENTPOLICYCHOOSE")) {
-                handlePresidentChoosingPolicy(update);
-            } else if (update.includes("POLICYDISCARD")) {
-                handlePolicyDiscard(update);
-            } else if (update.includes("CHANCELLORPOLICYCHOOSE")) {
-                handleChancellorChoosingPolicy(update);
-            } else if (update.includes("POLICYPASS")) {
-                handlePolicyPass(update,update.includes("FORCED"));
-            } else if (update.includes("ROUNDCOMPLETE")) {
-                handleRoundComplete(update);
+            let tempUp = update;
+            if (!update.includes("ID:")) {
+                tempUp = "00000000" + update;
             }
+            handleUpdate(tempUp.substring(8));
             handledUpdates.push(update);
+            updated = true;
         }
     });
-    if (!started) {
+    // if (expectingUpdate != "") {
+    //     let lastUpdate = updates[updates.length-1];
+    //     if (!lastUpdate.includes("ID:")) {
+    //         lastUpdate = "00000000" + lastUpdate;
+    //     }
+    //     console.log("UPDATEFAILED"+expectingUpdate);
+    //     console.log(lastUpdate);
+    //     if (lastUpdate.includes("ROLESGIVEN")) {
+    //         setChooseFirstPresButtons();
+    //     } else if (lastUpdate.includes("PRESIDENTELECT")) {
+    //         setChooseChancellorButtons();
+    //     } else if (lastUpdate.includes("VOTENOW") || lastUpdate.includes("VOTESENT")) {
+    //         let index = updates.lenth-1;
+    //         while (index > 0 && updates[index].includes("VOTESENT")) {
+    //             index = index-1;
+    //         }
+    //         let voteNowUpdate = updates[index];
+    //         console.log(index,updates[index]);
+    //         if (voteNowUpdate.includes("VOTENOW")) {
+    //             handleVoteNow(voteNowUpdate.substring(8),false);
+    //         }
+    //     } else if (lastUpdate.includes("PRESIDENTPOLICYCHOOSE") && expectingUpdate != "VOTESENT") {
+    //         handlePresidentChoosingPolicy(lastUpdate.substring(8), false);
+    //     } else if (lastUpdate.includes("CHANCELLORPOLICYCHOOSE")) {
+    //         handleChancellorChoosingPolicy(lastUpdate.substring(8), false);
+    //     } else if (lastUpdate.includes("ROUNDCOMPLETE")) {
+    //         handleRoundComplete(lastUpdate.substring(8), false);
+    //     } else {
+    //         expectingUpdate = true;
+    //         console.log("OOF unknown update");
+    //     }
+    //     expectingUpdate = "";
+    // }
+    prevUpdated = updated;
+    if (!started && playerButtonBox.childElementCount + 1 >= 5) {
         makeStartButton();
     }
-    // console.log(handledUpdates);
 }
 
 
@@ -511,7 +896,7 @@ const handleUpdates = (game) => {
 const acceptJoinRequest = (name,requestID) => {
     acknowledgedRequestIDs.push(requestID);
     let data = {
-        type: "ACCEPTJOINRQ",
+        type: "ACCEPTRQ REJOIN",
         accepted: name,
         requestID: requestID
     };
@@ -521,7 +906,7 @@ const acceptJoinRequest = (name,requestID) => {
 const acceptPresident = (name,requestID) => {
     acknowledgedRequestIDs.push(requestID);
     let data = {
-        type: "ACCEPTPRESIDENT",
+        type: "ACCEPTRQ FIRSTPRESIDENT",
         accepted: name,
         requestID: requestID
     };
@@ -529,9 +914,9 @@ const acceptPresident = (name,requestID) => {
 }
 
 
-const handleRequests = (game) => {
+const handleRequests = (requests) => {
     // let pendingIDs = []
-    game["requests"].forEach( (requestString) => {
+    requests.forEach( (requestString) => {
         let id = requestString.substring(requestString.indexOf("ID:")+3);
         // pendingIDs.push(id);
         if (!requestString.includes("PROCESSED") && !acknowledgedRequestIDs.includes(id)) {
@@ -561,7 +946,7 @@ const handleRequests = (game) => {
                     requestBox.appendChild(request);
                 } else if (requestString.includes("CONFIRMPRES")) {
                     let requestedPresident = requestString.substring(11,requestString.indexOf("BY"));
-                    let picker = requestString.substring(requestString.indexOf("BY")+2)
+                    let picker = requestString.substring(requestString.indexOf("BY")+2,requestString.indexOf("ID"))
                     if (picker != username && requestedPresident != username) {
                         title.innerText = picker + " wants " + requestedPresident + " to be president.";
                         button.className += " confirmPres";
@@ -596,19 +981,17 @@ const handleRequests = (game) => {
 
 
 
-const handleHitlerResult = (text) => {
-    // console.log(text);
-    let gameJSON = text;
-    let game = JSON.parse(gameJSON);
-    // console.log("updates", game["updates"]);
-    // console.log("requests", game["requests"]);
-
-    handleUpdates(game);
-    handleRequests(game);
-
+const handleHitlerResult = (updateJSON) => {
     setTimeout(function () {
         pollHitlerData();
     }, 2000);
+
+    let update = JSON.parse(updateJSON);
+
+    me = update.player;
+
+    handleUpdates(update.updates);
+    handleRequests(update.requests);
 }
 const pollHitlerData = () => {
     let xhttp = new XMLHttpRequest();
@@ -619,7 +1002,7 @@ const pollHitlerData = () => {
     // }, 100);
     let url = "/game-lounge/secret-hitler/data";
     let params = xwwwfurlenc({
-        secret: "secret hitler is the best game ever",
+        secret: HITLER_SECRET,
         type: "UPDATE",
         gameID: gameID,
         username: username
@@ -644,7 +1027,7 @@ const postHitlerData = (json_params) => {
     let xhttp = new XMLHttpRequest();
     let url = "/game-lounge/secret-hitler/data";
     let params = {
-        secret: "secret hitler is the best game ever",
+        secret: HITLER_SECRET,
         gameID: gameID,
         username: username
     };
@@ -658,6 +1041,10 @@ const postHitlerData = (json_params) => {
             if (this.status == 200) {
                 console.log("data was received");
                 console.log(this.responseText);
+                let ind = responseExpectors.indexOf(params["type"]);
+                if (ind >= 0) {
+                    expectingUpdate = expectedResponse[ind];
+                }
             }
         }
     };
@@ -667,12 +1054,12 @@ const postHitlerData = (json_params) => {
 
 
 
-function confirmLeave() {
+const confirmLeave = () => {
     console.log("leaving: "+username);
     let xhttp = new XMLHttpRequest();
     let url = "/game-lounge/secret-hitler/data";
     let params = xwwwfurlenc({
-        secret: "secret hitler is the best game ever",
+        secret: HITLER_SECRET,
         type: "PLAYEREXIT",
         gameID: gameID,
         username: username
@@ -695,9 +1082,13 @@ window.addEventListener(beforeUnloadEvent, confirmLeave);
 
 
 
-
-const gameLog = (message) => {
-  let logDiv = document.querySelector("#gameLog");
-  logDiv.innerHTML += '<p>&gt;&nbsp;' + message + '</p>';
-  logDiv.scrollTop = logDiv.scrollHeight;
+let logDiv = document.querySelector("#gameLog");
+const gameLog = (message, doLog = true) => {
+    if (doLog) {
+        logDiv.innerHTML += '<p>&gt;&nbsp;' + message + '</p>';
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
 };
+
+
+// })(window);

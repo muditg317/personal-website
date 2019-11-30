@@ -160,9 +160,18 @@ const requestJoin = () => {
         if (this.readyState == 4) {
             if (this.status == 200) {
                 console.log(this.responseText);
-                acceptInterval = setInterval(function () {
-                    pollAccept(gameID,username);
-                }, 1000);
+                if (this.responseText == "SUCCESS") {
+                    setTimeout(() => {
+                        window.location.href = "/game-lounge/secret-hitler?" + xwwwfurlenc({
+                            gameID: gameID,
+                            username: username
+                        });
+                    }, 500);
+                } else {
+                    acceptInterval = setInterval(function () {
+                        pollAccept(gameID,username);
+                    }, 1000);
+                }
             }
         }
     };

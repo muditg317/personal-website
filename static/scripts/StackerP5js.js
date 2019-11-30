@@ -195,11 +195,13 @@ const spawnBlock = () => {
 };
 
 
-function keyPressed() {
+function keyPressed(e) {
     if (key == '1' && !gameStarted) {
+        e.preventDefault();
         handleEvent();
     }
     if (key == ' ' && gameStarted) {
+        e.preventDefault();
         handleEvent();
     }
 }
