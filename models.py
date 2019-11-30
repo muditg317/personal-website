@@ -63,9 +63,9 @@ class SH_Player(ndb.Model):
         return "ID:" + id + "|"
 
     def reset(self):
-        startUpdate = next(iter(filter(lambda update: "GAMESTARTED" in update, self.updates)),None)
-        if startUpdate:
-            self.updates[self.updates.index(startUpdate):] = []
+        # startUpdate = next(iter(filter(lambda update: "GAMESTARTED" in update, self.updates)),None)
+        # if startUpdate:
+        #     self.updates[self.updates.index(startUpdate):] = []
         self.role = None
         self.party = None
         self.alive = None
@@ -115,6 +115,7 @@ class SH_Game(ndb.Model):
     presidentIndex = ndb.IntegerProperty()
     consecutiveDowns = ndb.IntegerProperty(default=0)
     vetoEnabled = ndb.BooleanProperty(default=False)
+    vetos = ndb.StringProperty(repeated=True)
 
     def postError(self, error):
         query = ErrorLog.query().fetch()
@@ -346,7 +347,10 @@ class SH_Game(ndb.Model):
         self.checkPolicyDeck()
         self.endRound()
         if not self.checkWin():
-            if not self.checkPowers():
+            if policy == "fascist":
+                if not self.checkPowers():
+                    self.offerNextRound()
+            else:
                 self.offerNextRound()
 
     def checkPolicyDeck(self):
@@ -360,7 +364,7 @@ class SH_Game(ndb.Model):
     def shufflePolicies(self):
         random.shuffle(self.policies)
 
-    def offerVeto(self):
+    def offerVeto(self, to_enact):
         vetoUpdate = "OFFERVETO"+to_enact + "PRESIDENT" + self.president + "CHANCELLOR" + self.chancellor
         self.postUpdate(vetoUpdate)
         self.state = "VETOPENDING"+to_enact
@@ -533,6 +537,10 @@ class SH_Game(ndb.Model):
     def endGame(self):
         exposeRolesList = [player.username + "||" + player.role for player in self.players]
         self.postUpdate("GAMEOVER+" + "PLAYER".join(exposeRolesList))
+        self.offerNewGame()
+
+    def offerNewGame(self):
+        self.postUpdate("OFFERNEWGAME")
 
     def reset(self):
         self.policies = ["liberal"]*6 + ["fascist"]*11
@@ -550,6 +558,11 @@ class SH_Game(ndb.Model):
         for player in self.players:
             self.vetoEnabled = False
             player.reset()
+        self.postUpdate("GAMERESET|"+",".join(self.getUsernames()))
+
+    def startNewGame(self, username):
+        self.reset()
+        self.beginNewGame(username)
 
     def postUpdate(self, update, *usernames):
         if not usernames:

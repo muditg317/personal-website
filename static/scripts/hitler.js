@@ -19,9 +19,9 @@ let acknowledgedRequestIDs = [];
 
 const tempDisableButton = (button) => {
     button.disabled = true;
-    button.style.backgroundColor = "rgb(80,80,80)"
+    button.style.backgroundColor = "rgb(80,80,80)";
     setTimeout(() => {
-        button..style.backgroundColor = "rgba(255,255,255,0)";
+        button.style.backgroundColor = "rgba(255,255,255,0)";
         button.disabled = false;
     }, 2000);
 }
@@ -31,7 +31,6 @@ let playerButtonEvent = (name) => {
 }
 const playerChooserButtonEvent = (name, button) => {
     playerButtonEvent(name);
-    console.log(button);
     tempDisableButton(button);
 }
 const resetPlayerChooser = () => {
@@ -41,7 +40,25 @@ const resetPlayerChooser = () => {
         console.log(name);
     }
 }
-
+const createPlayerButton = (name) => {
+    let playerButton = document.querySelector(`#${name}`);
+    if (playerButton == null) {
+        let button = document.createElement("BUTTON");
+        button.className = "playerButton hitlerButton";
+        button.id = name;
+        button.innerText = name;
+        button.onclick = (e) => {
+            playerChooserButtonEvent(name, button);
+        };
+        playerButtonBox.appendChild(button);
+    }
+}
+const removePlayerButton = (name) => {
+    let playerButton = document.querySelector(`#${name}`);
+    if (playerButton != null) {
+        playerButtonBox.removeChild(playerButton);
+    }
+}
 
 
 const makeStartButton = () => {
@@ -73,14 +90,7 @@ const makeStartButton = () => {
 const handlePlayerJoin = (update) => {
     let name = update.substring(10);
     if (name != username) {
-        let button = document.createElement("BUTTON");
-        button.className = "playerButton hitlerButton";
-        button.id = name;
-        button.innerText = name;
-        button.onclick = (e) => {
-            playerChooserButtonEvent(name, button);
-        };
-        playerButtonBox.appendChild(button);
+        createPlayerButton(name);
         gameLog(name + " joined the game.");
     } else {
         gameLog("You joined the game!");
@@ -484,6 +494,10 @@ const handleOfferVeto = (update) => {
         gameLog(`A ${policy} policy is about to be passed. President ${president} and chancellor ${chancellor} are deciding if they wish to veto.`);
     } else {
         gameLog(`A ${policy} policy is about to be passed. You may veto if you want to.`);
+        let policyEnactAction = document.querySelector("#policyEnact");
+        if (policyEnactAction != null) {
+            actionBox.removeChild(policyEnactAction);
+        }
         createVetoButton(policy);
     }
 }
@@ -666,6 +680,7 @@ const handleKillResult = (powerResult) => {
     if (powerResult.includes("|PRES|")) {
         resetPlayerChooser();
     }
+    removePlayerButton(victim);
 }
 const handleNukedResult = (powerResult) => {
     let nukeUpdate = powerResult.split("|")
@@ -676,6 +691,9 @@ const handleNukedResult = (powerResult) => {
     if (powerResult.includes("|PRES|")) {
         resetPlayerChooser();
     }
+    victims.forEach( (victim) => {
+        removePlayerButton(victim);
+    });
 }
 const handlePowerResult = (update) => {
     let powerResult = update.substring(12);
@@ -761,17 +779,57 @@ const handleGameOver = (update) => {
     }
 }
 
-
-let prevUpdated;
-let expectingUpdate = "";
-let responseExpectors = ["PICKPRESIDENT DOCONFIRM", "CHANCELLORCHOSEN", "VOTE",     "DISCARDPOLICY", "ENACTPOLICY", "BEGINROUND"];
-let expectedResponse =  ["PRESIDENTCHOOSE",         "VOTENOW",          "VOTESENT", "POLICYDISCARD", "POLICYPASS",  "PRESIDENTELECT"];
-const handleUpdate = (update) => {
-    if (expectedResponse.includes(expectingUpdate)) {
-        if (expectingUpdate != "VOTESENT" || expectingUpdate.endsWith("BY"+me.username)) {
-            expectingUpdate = "";
-        }
+const createNewGameButton = () => {
+    let newGameAction = document.querySelector("#newGameAction");
+    if (newGameAction == null) {
+        newGameAction = document.createElement("DIV");
+        newGameAction.id = "newGameAction";
+        actionBox.appendChild(newGameAction);
+        let newGameTitle = document.createElement("P");
+        newGameTitle.innerText = "Press when done with discussion.";
+        newGameAction.appendChild(newGameTitle);
+        let buttonBox = document.createElement("DIV");
+        buttonBox.className = "buttonBox";
+        let newGameButton = document.createElement("BUTTON");
+        buttonBox.appendChild(newGameButton);
+        newGameAction.appendChild(buttonBox);
+        newGameButton.className = "hitlerButton";
+        newGameButton.id = "newGameButton";
+        newGameButton.innerText = "Next Round";
+        newGameButton.onclick = (e) => {
+            let data = {
+                type: "NEWGAME"
+            };
+            postHitlerData(data);
+            tempDisableButton(newGameButton);
+        };
     }
+}
+const handleNewGameOffered = (update) => {
+    createNewGameButton();
+}
+
+const handleGameReset = (update) => {
+    let players = update.substring(update.indexOf("|")+1).split(",");
+    players.forEach( (player) => {
+        if (player != me.username) {
+            removePlayerButton(player);
+            createPlayerButton(player);
+        }
+    });
+}
+
+
+// let prevUpdated;
+// let expectingUpdate = "";
+// let responseExpectors = ["PICKPRESIDENT DOCONFIRM", "CHANCELLORCHOSEN", "VOTE",     "DISCARDPOLICY", "ENACTPOLICY", "BEGINROUND"];
+// let expectedResponse =  ["PRESIDENTCHOOSE",         "VOTENOW",          "VOTESENT", "POLICYDISCARD", "POLICYPASS",  "PRESIDENTELECT"];
+const handleUpdate = (update) => {
+    // if (expectedResponse.includes(expectingUpdate)) {
+    //     if (expectingUpdate != "VOTESENT" || expectingUpdate.endsWith("BY"+me.username)) {
+    //         expectingUpdate = "";
+    //     }
+    // }
     if (update.includes("PLAYERJOIN")) {
         handlePlayerJoin(update);
     } else if (update.includes("GAMESTARTED")) {
@@ -822,6 +880,10 @@ const handleUpdate = (update) => {
         handleGameWin(update);
     } else if (update.includes("GAMEOVER+")) {
         handleGameOver(update);
+    } else if (update.includes("OFFERNEWGAME")) {
+        handleNewGameOffered(update);
+    } else if (update.includes("GAMERESET")) {
+        handleGameReset(update);
     } else {
         console.log("OOF unknown update");
     }
@@ -835,7 +897,7 @@ const handleUpdates = (updates) => {
         document.location.reload(true);
     }
     console.log(updates.slice(-20));
-    let updated = false;
+    // let updated = false;
     updates.forEach( (update, index, array) => {
         if (update.includes("PLAYERJOIN")) {
             started = false;
@@ -843,13 +905,9 @@ const handleUpdates = (updates) => {
             started = true;
         }
         if (!handledUpdates.includes(update)) {
-            let tempUp = update;
-            if (!update.includes("ID:")) {
-                tempUp = "00000000" + update;
-            }
-            handleUpdate(tempUp.substring(8));
+            handleUpdate(update.substring(8));
             handledUpdates.push(update);
-            updated = true;
+            // updated = true;
         }
     });
     // if (expectingUpdate != "") {
@@ -885,7 +943,7 @@ const handleUpdates = (updates) => {
     //     }
     //     expectingUpdate = "";
     // }
-    prevUpdated = updated;
+    // prevUpdated = updated;
     if (!started && playerButtonBox.childElementCount + 1 >= 5) {
         makeStartButton();
     }
@@ -1041,10 +1099,10 @@ const postHitlerData = (json_params) => {
             if (this.status == 200) {
                 console.log("data was received");
                 console.log(this.responseText);
-                let ind = responseExpectors.indexOf(params["type"]);
-                if (ind >= 0) {
-                    expectingUpdate = expectedResponse[ind];
-                }
+                // let ind = responseExpectors.indexOf(params["type"]);
+                // if (ind >= 0) {
+                //     expectingUpdate = expectedResponse[ind];
+                // }
             }
         }
     };

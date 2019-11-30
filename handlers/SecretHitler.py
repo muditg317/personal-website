@@ -186,6 +186,9 @@ class SecretHitlerData(webapp2.RequestHandler):
             victim = self.request.get("victim")
             game.nuke(victim)
             game.put()
+        elif "NEWGAME" in type:
+            game.startNewGame(username)
+            game.put()
         elif "BEGINROUND" in type:
             game.nextRound()
             game.put()
