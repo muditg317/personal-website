@@ -207,4 +207,23 @@ body {
   box-shadow: 7px 7px 4px grey;
 }
 
+.prettyButton {
+  min-height: 30px;
+  padding: 0px 10px;
+  margin: 10px;
+  color: black;
+  font-family: roboto;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 15px;
+  border-color: black;
+  border-width: 1px;
+}
+.prettyButton :hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 0, 0, 0.5);
+}
+
 /*# sourceMappingURL=base.css.map */

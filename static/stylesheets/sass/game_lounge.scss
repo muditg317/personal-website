@@ -1,0 +1,11 @@
+.gameLounge_games {
+    display: flex;
+    flex-flow: row wrap;
+    > .game {
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        margin: 10px;
+        max-width: 800px;
+    }
+}

@@ -1,4 +1,4 @@
-// (function(window, undefined){
+(function(window, undefined){
 const dataBox = document.querySelector("#web_data");
 const HITLER_SECRET = document.querySelector("#secret").textContent;
 dataBox.removeChild(document.querySelector("#secret"));
@@ -44,7 +44,7 @@ const createPlayerButton = (name) => {
     let playerButton = document.querySelector(`#${name}`);
     if (playerButton == null) {
         let button = document.createElement("BUTTON");
-        button.className = "playerButton hitlerButton";
+        button.className = "playerButton prettyButton";
         button.id = name;
         button.innerText = name;
         button.onclick = (e) => {
@@ -75,7 +75,7 @@ const makeStartButton = () => {
         let startButton = document.createElement("BUTTON");
         buttonBox.appendChild(startButton);
         startAction.appendChild(buttonBox);
-        startButton.className = "hitlerButton";
+        startButton.className = "prettyButton";
         startButton.id = "startButton";
         startButton.innerText = "Start!";
         startButton.onclick = (e) => {
@@ -239,12 +239,12 @@ const setVoteButtons = (chancellor, president, chanceStr, presStr) => {
     buttonBox.className = "buttonBox";
     action.appendChild(buttonBox);
     let yesButton = document.createElement("BUTTON");
-    yesButton.className = "hitlerButton";
+    yesButton.className = "prettyButton";
     buttonBox.appendChild(yesButton);
     yesButton.className += " voteYes";
     yesButton.innerText = "Ja! (yes)";
     let noButton = document.createElement("BUTTON");
-    noButton.className = "hitlerButton";
+    noButton.className = "prettyButton";
     buttonBox.appendChild(noButton);
     noButton.className += " voteNo";
     noButton.innerText = "Nein! (no)";
@@ -367,7 +367,7 @@ const createPresidentDiscardButtons = (policies) => {
     action.appendChild(buttonBox);
     policies.forEach( (policy) => {
         let button = document.createElement("BUTTON");
-        button.className = "hitlerButton";
+        button.className = "prettyButton";
         buttonBox.appendChild(button);
         button.className += " policy";
         button.innerText = policy;
@@ -420,7 +420,7 @@ const createChancellorEnactButtons = (policies) => {
     action.appendChild(buttonBox);
     policies.forEach( (policy) => {
         let button = document.createElement("BUTTON");
-        button.className = "hitlerButton";
+        button.className = "prettyButton";
         buttonBox.appendChild(button);
         button.className += " policy";
         button.innerText = policy;
@@ -458,7 +458,7 @@ const createVetoButton = (policy) => {
         let noButton = document.createElement("BUTTON");
         buttonBox.appendChild(noButton);
         vetoAction.appendChild(buttonBox);
-        vetoButton.className = "hitlerButton";
+        vetoButton.className = "prettyButton";
         vetoButton.id = "vetoButton";
         vetoButton.innerText = "VETO!";
         vetoButton.onclick = (e) => {
@@ -470,7 +470,7 @@ const createVetoButton = (policy) => {
             postHitlerData(data);
             tempDisableButton(vetoButton);
         };
-        noButton.className = "hitlerButton";
+        noButton.className = "prettyButton";
         noButton.id = "noButton";
         noButton.innerText = "Let it pass.";
         noButton.onclick = (e) => {
@@ -731,7 +731,7 @@ const createRoundContinueButton = () => {
         let continueButton = document.createElement("BUTTON");
         buttonBox.appendChild(continueButton);
         continueAction.appendChild(buttonBox);
-        continueButton.className = "hitlerButton";
+        continueButton.className = "prettyButton";
         continueButton.id = "continueButton";
         continueButton.innerText = "Next Round";
         continueButton.onclick = (e) => {
@@ -793,7 +793,7 @@ const createNewGameButton = () => {
         let newGameButton = document.createElement("BUTTON");
         buttonBox.appendChild(newGameButton);
         newGameAction.appendChild(buttonBox);
-        newGameButton.className = "hitlerButton";
+        newGameButton.className = "prettyButton";
         newGameButton.id = "newGameButton";
         newGameButton.innerText = "Next Round";
         newGameButton.onclick = (e) => {
@@ -991,7 +991,7 @@ const handleRequests = (requests) => {
                 request.appendChild(buttonBox);
                 let button = document.createElement("BUTTON");
                 buttonBox.appendChild(button);
-                button.className = "hitlerButton";
+                button.className = "prettyButton";
                 if (requestString.includes("JOIN")) {
                     let name = requestString.substring(4,requestString.indexOf("ID"));
                     title.innerText = name + " wants to join back into your game!";
@@ -1149,4 +1149,4 @@ const gameLog = (message, doLog = true) => {
 };
 
 
-// })(window);
+})(window);

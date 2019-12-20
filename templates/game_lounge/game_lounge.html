@@ -2,7 +2,7 @@
 {% block page_title %}Game Lounge{% endblock %}
 
 {% block styles %}
-
+<link rel="stylesheet" href="../static/stylesheets/css/game_lounge.css">
 {% endblock %}
 
 {% block nav_bar %}
@@ -20,39 +20,45 @@
 {% block background_imgURL %}{% endblock %}
 
 {% block pageContent %}
-    <h1>Stacker</h1>
-    <p>It's just the spacebar. That's it.</p>
-    <div class="game" id="stacker">
-        <div class="gameBoard" id="stackerContainer">
+    <div class="gameLounge_games">
+        <div class="game" id="stacker">
+            <h1>Stacker</h1>
+            <p>It's just the spacebar. That's it.</p>
+            <div class="gameBoard" id="stackerContainer">
 
+            </div>
         </div>
+        <div class="game" id="secretHitler">
+            <h1>Secret Hitler</h1>
+            <p>Play with some friends!</p>
+            <form name="createHitler">
+                <input type="text" name="gameID" placeholder="Enter a name for your gameroom">
+                <input type="text" name="username" placeholder="Enter a username">
+                <input type="button" name="submit" value="Create Game!" onclick="attemptCreate()" class="prettyButton">
+            </form>
+            <form name="joinHitler">
+                <input type="text" name="gameID" placeholder="Enter a name for your gameroom">
+                <input type="text" name="username" placeholder="Enter a username">
+                <input type="hidden" name="otherUser" placeholder="Enter someone else's username">
+                <input type="button" name="submit" value="Join Game!" onclick="attemptJoin()" class="prettyButton">
+                {% if displayed %}
+                    <input type="button" name="request" value="Request game entry" onclick="requestJoin()" class="prettyButton">
+                {% endif %}
+            </form>
+        </div>
+        <!-- <div class="game" id="newGame">
+            <h1>The New Game</h1>
+            <p>I need game ideas!.</p>
+            <div class="gameBoard" id="gameContainer">
+
+            </div>
+        </div> -->
     </div>
-    <h1>Secret Hitler</h1>
-    <p>Play with some friends!</p>
-    <div class="game" id="secretHitler">
-        <form name="createHitler">
-            <input type="text" name="gameID" placeholder="Enter a name for your gameroom">
-            <input type="text" name="username" placeholder="Enter a username">
-            <input type="button" name="submit" value="Create Game!" onclick="attemptCreate()">
-        </form>
-        <form name="joinHitler">
-            <input type="text" name="gameID" placeholder="Enter a name for your gameroom">
-            <input type="text" name="username" placeholder="Enter a username">
-            <input type="hidden" name="otherUser" placeholder="Enter someone else's username">
-            <input type="button" name="submit" value="Join Game!" onclick="attemptJoin()">
-            {% if displayed %}
-                <input type="button" name="request" value="Request game entry" onclick="requestJoin()">
-            {% endif %}
-        </form>
-    </div>
-    <!-- <div class="rising_button" id="back_to_top_block" onclick="goToTop()">
-        <p>Back to top:</p>
-        <img src="../../static/images/up_arrow.png" alt="">
-    </div> -->
 {% endblock %}
 
 {% block scripts %}
 <script language="javascript" type="text/javascript" src="../../static/scripts/libraries/p5.min.js"></script>
 <script language="javascript" type="text/javascript" src="../../static/scripts/StackerP5js.js"></script>
 <script language="javascript" type="text/javascript" src="../../static/scripts/startHitler.js"></script>
+<!-- <script language="javascript" type="text/javascript" src="../../static/scripts/newGameP5.js"></script> -->
 {% endblock %}
