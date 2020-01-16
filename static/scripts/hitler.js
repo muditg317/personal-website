@@ -17,18 +17,38 @@ let handledUpdates = [];
 let requestBox = document.querySelector("#requestBox");
 let acknowledgedRequestIDs = [];
 
+
+let pollTimeout;
+const resetPollTimeout = () => {
+    quickPolling = setInterval( () => {
+      clearTimeout(pollTimeout);
+      pollHitlerData();
+    }, 100);
+    setTimeout( () => {
+      clearInterval(quickPolling);
+    }, 550);
+}
+
 const tempDisableButton = (button) => {
-    button.disabled = true;
-    button.style.backgroundColor = "rgb(80,80,80)";
-    setTimeout(() => {
-        button.style.backgroundColor = "rgba(255,255,255,0)";
-        button.disabled = false;
-    }, 2000);
+    buttonContainer = button.parentNode;
+    items = buttonContainer.childNodes;
+    items.forEach( (btn) => {
+        if (btn.nodeName === "BUTTON") {
+          btn.disabled = true;
+          btn.style.backgroundColor = "rgb(80,80,80)";
+          setTimeout(() => {
+              btn.style.backgroundColor = "rgba(255,255,255,0)";
+              btn.disabled = false;
+          }, 2000);
+        }
+    });
+    resetPollTimeout();
 }
 
 let playerButtonEvent = (name) => {
     console.log(name);
 }
+
 const playerChooserButtonEvent = (name, button) => {
     playerButtonEvent(name);
     tempDisableButton(button);
@@ -41,11 +61,11 @@ const resetPlayerChooser = () => {
     }
 }
 const createPlayerButton = (name) => {
-    let playerButton = document.querySelector(`#${name}`);
+    let playerButton = document.querySelector(`#${name.replace(" ","")}`);
     if (playerButton == null) {
         let button = document.createElement("BUTTON");
         button.className = "playerButton prettyButton";
-        button.id = name;
+        button.id = name.replace(" ","");
         button.innerText = name;
         button.onclick = (e) => {
             playerChooserButtonEvent(name, button);
@@ -54,7 +74,7 @@ const createPlayerButton = (name) => {
     }
 }
 const removePlayerButton = (name) => {
-    let playerButton = document.querySelector(`#${name}`);
+    let playerButton = document.querySelector(`#${name.replace(" ","")}`);
     if (playerButton != null) {
         playerButtonBox.removeChild(playerButton);
     }
@@ -231,7 +251,7 @@ const sendVote = (decision, chancellor, president) => {
 const setVoteButtons = (chancellor, president, chanceStr, presStr) => {
     let action = document.createElement("DIV");
     action.className = "action";
-    action.id = "voteFor"+chancellor;
+    action.id = "voteFor"+chancellor.replace(" ","");
     let title = document.createElement("P");
     title.innerText = presStr + " choosing " + chanceStr;
     action.appendChild(title);
@@ -291,7 +311,7 @@ const handleVoteSent = (update) => {
     }
     gameLog(voter + " voted " + vote + " for " + chancellor.toLowerCase() + " as chancellor." + (vote == "yes" ? " Nice!" : " How sad."));
     if (voter == "You") {
-        let voteAction = document.querySelector("#voteFor"+update.substring(8,update.indexOf("CHOICE")));
+        let voteAction = document.querySelector("#voteFor"+(update.substring(8,update.indexOf("CHOICE"))).replace(" ",""));
         if (voteAction != null) {
             actionBox.removeChild(voteAction);
         }
@@ -310,7 +330,7 @@ const handleChancellorElected = (update) => {
         presStr = "your";
     }
     gameLog(chanceStr + " voted in as " + presStr + " chancellor.");
-    let voteAction = document.querySelector("#voteFor"+newChancellor);
+    let voteAction = document.querySelector("#voteFor"+newChancellor.replace(" ",""));
     if (voteAction != null) {
         actionBox.removeChild(voteAction);
     }
@@ -331,7 +351,7 @@ const handleChancellorFailed = (update) => {
         presStr = "your";
     }
     gameLog("The democracy does not want " + chanceStr + " to be " + presStr + " chancellor.");
-    let voteAction = document.querySelector("#voteFor"+newChancellor);
+    let voteAction = document.querySelector("#voteFor"+newChancellor.replace(" ",""));
     if (voteAction != null) {
         actionBox.removeChild(voteAction);
     }
@@ -599,7 +619,7 @@ const handleSpecialElectionPower = (power) => {
     playerButtonEvent = (name) => {
         let data = {
             type: "SPECIALELECTION",
-            president: name
+            newPres: name
         };
         postHitlerData(data);
     }
@@ -1038,9 +1058,8 @@ const handleRequests = (requests) => {
 
 
 
-
 const handleHitlerResult = (updateJSON) => {
-    setTimeout(function () {
+    pollTimeout = setTimeout(function () {
         pollHitlerData();
     }, 2000);
 
@@ -1109,6 +1128,36 @@ const postHitlerData = (json_params) => {
     xhttp.send(params);
 }
 
+// Set the name of the hidden property and the change event for visibility
+var hidden, visibilityChange;
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+    hidden = "hidden";
+    visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+    hidden = "msHidden";
+    visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+    hidden = "webkitHidden";
+    visibilityChange = "webkitvisibilitychange";
+}
+
+
+// If the page is hidden, pause the video;
+// if the page is shown, play the video
+function handleVisibilityChange() {
+    clearTimeout(pollTimeout);
+    if (!document[hidden]) {
+        pollHitlerData();
+    }
+}
+
+// Warn if the browser doesn't support addEventListener or the Page Visibility API
+if (typeof document.addEventListener === "undefined" || hidden === undefined) {
+    console.log("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
+} else {
+    // Handle page visibility change
+    document.addEventListener(visibilityChange, handleVisibilityChange, false);
+}
 
 
 
@@ -1134,7 +1183,7 @@ const confirmLeave = () => {
     };
     xhttp.send(params);
 }
-let isOnIOS = navigator.userAgent.match(/iPad/i)|| navigator.userAgent.match(/iPhone/i);
+let isOnIOS = navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i);
 let beforeUnloadEvent = isOnIOS ? "pagehide" : "beforeunload";
 window.addEventListener(beforeUnloadEvent, confirmLeave);
 
@@ -1143,7 +1192,7 @@ window.addEventListener(beforeUnloadEvent, confirmLeave);
 let logDiv = document.querySelector("#gameLog");
 const gameLog = (message, doLog = true) => {
     if (doLog) {
-        logDiv.innerHTML += '<p>&gt;&nbsp;' + message + '</p>';
+        logDiv.innerHTML += '<p>&gt;&nbsp;' + message + '</p>';// + logDiv.innerHTML;
         logDiv.scrollTop = logDiv.scrollHeight;
     }
 };

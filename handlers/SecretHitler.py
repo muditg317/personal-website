@@ -20,15 +20,16 @@ class SecretHitlerPage(webapp2.RequestHandler):
         username = self.request.get("username")
         games = SH_Game.query().filter(SH_Game.gameID==gameID).fetch()
         if len(games) == 0:
-            return self.redirect("/game-lounge#secretHitler"+str(games))
+            return self.redirect("/game-lounge#secretHitler")
         elif len(games) > 1:
-            return self.redirect("/game-lounge#secretHitler"+str(games))
+            return self.redirect("/game-lounge#secretHitler")
         else:
             game = games[0]
             player = game.getPlayer(username)
             if player == None:
                 return self.redirect("/game-lounge#secretHitler")
             else:
+                player.confirmOnline()
                 if player.displayed:
                     return self.redirect("/game-lounge?displayed=true#secretHitler")
                 else:
@@ -61,7 +62,6 @@ class SecretHitlerData(webapp2.RequestHandler):
         if "UPDATE" in type:
             username = self.request.get("username")
             game.checkIn(username)
-            game.confirmOthersActive(username)
             game.put()
             player = game.getPlayer(username)
             playerDict = player.as_dict()
@@ -78,6 +78,7 @@ class SecretHitlerData(webapp2.RequestHandler):
             if "DISPLAYED" in type:
                 username = self.request.get("username")
                 player = game.getPlayer(username)
+                player.confirmOnline()
                 if not player.displayed:
                     self.response.write("SUCCESS")
         else:
@@ -100,6 +101,7 @@ class SecretHitlerData(webapp2.RequestHandler):
                         self.response.write("Invalid other username")
                 else:
                     if "REQUEST" in type:
+                        player.confirmOnline()
                         if player.displayed:
                             game.requestPlayerEntry(username)
                             game.put()
@@ -124,11 +126,15 @@ class SecretHitlerData(webapp2.RequestHandler):
             game.put()
             self.response.write(username+" marked as undisplayed.")
         elif "STARTGAME" in type:
+            if not game.awaitingStart():
+                return self.abort(404);
             game.beginNewGame(username)
             game.put()
         elif "PICKPRESIDENT" in type:
             requestedPresident = self.request.get("name")
             if "DOCONFIRM" in type:
+                if not game.pickingFirstPres():
+                    return self.abort(404)
                 game.requestFirstPres(requestedPresident, username)
                 game.put()
                 self.response.write("A request to elect " + requestedPresident + " was sent.")
@@ -148,14 +154,12 @@ class SecretHitlerData(webapp2.RequestHandler):
                 return self.abort(404);
             decision = self.request.get("decision")
             game.registerVote(username, chancellor, decision)
-            game.evaluateVote(chancellor)
             game.put()
         elif "DISCARDPOLICY" in type:
             policy = self.request.get("policy")
             if not game.presidentPicking(username, policy):
                 self.abort(404)
             game.discardPolicy(policy)
-            game.sendPoliciesToChancellor()
             game.put()
         elif "ENACTPOLICY" in type:
             policy = self.request.get("policy")
@@ -171,25 +175,37 @@ class SecretHitlerData(webapp2.RequestHandler):
             game.receiveVeto(veto, username, policy)
             game.put()
         elif "INVESTIGATE" in type:
+            if not game.investigating(username):
+                return self.abort(404)
             player = self.request.get("choice")
             game.investigate(player)
             game.put()
         elif "SPECIALELECTION" in type:
-            presidentChoice = self.request.get("president")
+            if not game.specialElecting(username):
+                return self.abort(404)
+            presidentChoice = self.request.get("newPres")
             game.specialElection(presidentChoice)
             game.put()
         elif "KILL" in type:
+            if not game.killing(username):
+                return self.abort(404)
             victim = self.request.get("victim")
             game.kill(victim)
             game.put()
         elif "NUKE" in type:
+            if not game.killing(username):
+                return self.abort(404)
             victim = self.request.get("victim")
             game.nuke(victim)
             game.put()
         elif "NEWGAME" in type:
+            if not game.gameOver():
+                return self.abort(404)
             game.startNewGame(username)
             game.put()
         elif "BEGINROUND" in type:
+            if not game.awaitingNextRound():
+                return self.abort(404)
             game.nextRound()
             game.put()
             self.response.write("starting next round")
@@ -203,6 +219,8 @@ class SecretHitlerData(webapp2.RequestHandler):
                 self.response.write(str(game.requests))
             elif "FIRSTPRESIDENT" in type:
                 acceptedPres = self.request.get("accepted")
+                if not game.acceptingFirstPres():
+                    return self.abort(404)
                 game.acceptFirstPres(acceptedPres)
                 game.put()
             else:

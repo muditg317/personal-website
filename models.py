@@ -33,6 +33,8 @@ class SH_Player(ndb.Model):
         self.unmarkDisplayed()
 
     def confirmOnline(self):
+        if not self.lastCheckin:
+            return self.checkOut()
         timeSinceCheckin = datetime.datetime.now() - self.lastCheckin
         if timeSinceCheckin > self.MAX_TIME_SINCE_CHECKIN():
             self.checkOut()
@@ -159,9 +161,11 @@ class SH_Game(ndb.Model):
 
     def checkIn(self, username):
         self.getPlayer(username).checkIn()
+        self.confirmOthersActive(username)
 
     def checkOut(self, username):
         self.getPlayer(username).checkOut()
+        self.confirmOthersActive(username)
 
     def confirmOthersActive(self, username):
         for player in self.getOthersDisplayed(username):
@@ -178,6 +182,9 @@ class SH_Game(ndb.Model):
         for player in self.getPlayers(*usernames):
             player.revive()
 
+    def awaitingStart(self):
+        return self.state == "INIT"
+
     def beginNewGame(self, username):
         self.postUpdate("GAMESTARTED"+username)
         self.shufflePolicies()
@@ -191,9 +198,9 @@ class SH_Game(ndb.Model):
         fascistNames = self.getUsernames(*nonHitlerFascists)
         self.postUpdate(roleUpdate+"+FASCIST+".join(fascistNames)+"HITLER"+self.hitler().username, *fascistNames)
         self.postUpdate(roleUpdate+("+FASCIST+"+fascistNames[0] if len(fascistNames) == 1 else ""), self.hitler().username)
+        self.state = "PICKINGFIRSTPRES"
 
     def applyRoles(self):
-        self.state = "ROLES"
         numPlayers = len(self.players)
         if numPlayers % 2 == 0:
             numFascists = (numPlayers / 2) - 1
@@ -223,10 +230,17 @@ class SH_Game(ndb.Model):
     def liberals(self):
         return [player for player in self.living() if player.party=="liberal"]
 
+    def pickingFirstPres(self):
+        return self.state == "PICKINGFIRSTPRES"
+
     def requestFirstPres(self, requestedPresident, picker):
         presRequest = "CONFIRMPRES"+requestedPresident+"BY"+picker
         self.postRequest(presRequest)
         self.postUpdate("PRESIDENTCHOOSE"+requestedPresident+"BY"+picker)
+        self.state = "ACCEPTINGFIRSTPRES"
+
+    def acceptingFirstPres(self):
+        return self.state == "ACCEPTINGFIRSTPRES"
 
     def acceptFirstPres(self, acceptedPresident):
         newPres = self.getPlayer(acceptedPresident)
@@ -254,8 +268,11 @@ class SH_Game(ndb.Model):
         return "VOTING"+chancellor == self.state and president == self.president
 
     def registerVote(self, voter, chancellor, vote):
+        if self.getPlayer(voter).voted:
+            return
         self.getPlayer(voter).registerVote(vote)
         self.postUpdate("VOTESENT"+chancellor+"CHOICE"+vote+"BY"+voter)
+        self.evaluateVote(chancellor)
 
     def getVotes(self):
         return [player.vote for player in self.living() if player.voted]
@@ -321,6 +338,7 @@ class SH_Game(ndb.Model):
         self.policySet.remove(to_discard)
         self.discard.append(to_discard)
         self.postUpdate("POLICYDISCARD"+self.president)
+        self.sendPoliciesToChancellor()
 
     def sendPoliciesToChancellor(self):
         chanceChoosingPolicyUpdate = "CHANCELLORPOLICYCHOOSE"+self.chancellor
@@ -456,21 +474,30 @@ class SH_Game(ndb.Model):
         return not self.usePower("PEEK", ",,".join(self.policies[0:3]))
 
     def executeInvestigatePower(self):
+        self.state = "INVESTIGATING|"+self.president
         return self.usePower("INVESTIGATE")
+    def investigating(self, president):
+        return self.state == "INVESTIGATING|"+president
     def investigate(self, username):
         investigationUpdate = "INVESTIGATION|"+username
         self.postPowerResult(investigationUpdate, self.getPlayer(username).party)
         self.offerNextRound()
 
     def executeSpecialElectionPower(self):
+        self.state = "SPECIALELECTING|"+self.president
         return self.usePower("SPECIALELECTION")
+    def specialElecting(self, president):
+        return self.state == "SPECIALELECTING|"+president
     def specialElection(self, chosenPresident):
         electionUpdate = "SPECIALELECTION|"+chosenPresident
         self.postPowerResult(electionUpdate)
         self.electPresident(chosenPresident,self.president)
 
     def executeKillPower(self):
+        self.state = "KILLING|"+self.president
         return self.usePower("KILL")
+    def killing(self, president):
+        return self.state == "KILLING|"+president
     def kill(self, victim):
         killUpdate = "ASSASSINATION|"+victim
         self.postPowerResult(killUpdate)
@@ -486,7 +513,10 @@ class SH_Game(ndb.Model):
         return not self.usePower("VETOENABLED")
 
     def executeNukePower(self):
+        self.state = "NUKING|"+self.president
         return self.usePower("NUKE")
+    def nuking(Self, president):
+        return self.state == "NUKING|"+president
     def nuke(self, victim):
         victimIndex = self.getUsernames(self.players).index(victim)
         leftVictim = next(iter(filter(lambda player: player.alive, self.players[0:victimIndex:-1]+self.players[victimIndex+1::-1]))).username
@@ -524,7 +554,11 @@ class SH_Game(ndb.Model):
         self.postUpdate("ROUNDCOMPLETE" + str(self.numLiberalPassed) + "FFF" + str(self.numFascistPassed))
 
     def offerNextRound(self):
+        self.state = "AWAITINGNEXTROUND"
         self.postUpdate("OFFERNEXTROUND")
+
+    def awaitingNextRound(self):
+        return self.state == "AWAITINGNEXTROUND"
 
     def nextRound(self):
         self.presidentIndex += 1
@@ -537,7 +571,11 @@ class SH_Game(ndb.Model):
     def endGame(self):
         exposeRolesList = [player.username + "||" + player.role for player in self.players]
         self.postUpdate("GAMEOVER+" + "PLAYER".join(exposeRolesList))
+        self.state = "GAMEOVER"
         self.offerNewGame()
+
+    def gameOver(self):
+        return self.state == "GAMEOVER"
 
     def offerNewGame(self):
         self.postUpdate("OFFERNEWGAME")
@@ -555,8 +593,8 @@ class SH_Game(ndb.Model):
         self.voted = []
         self.presidentIndex = None
         self.consecutiveDowns = 0
+        self.vetoEnabled = False
         for player in self.players:
-            self.vetoEnabled = False
             player.reset()
         self.postUpdate("GAMERESET|"+",".join(self.getUsernames()))
 
