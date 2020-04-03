@@ -302,7 +302,7 @@ class SH_Game(ndb.Model):
         self.chancellor = chancellor
         self.consecutiveDowns = 0
         if self.getPlayer(self.chancellor).role == "hitler":
-            self.postUpdates("HITLERELECT"+chancellor)
+            self.postUpdate("HITLERELECT"+chancellor)
             self.fascistsWin()
 
     def failChancellor(self, chancellor):
@@ -503,7 +503,7 @@ class SH_Game(ndb.Model):
         self.postPowerResult(killUpdate)
         self.getPlayer(victim).die()
         if self.getPlayer(victim).role == "hitler":
-            self.postUpdates("HITLERKILL"+victim)
+            self.postUpdate("HITLERKILL"+victim, self.getUsernames())
             self.liberalsWin()
         else:
             self.offerNextRound()
@@ -527,7 +527,7 @@ class SH_Game(ndb.Model):
         for player in self.getPlayers(victims):
             player.die()
         if not self.hitler().alive:
-            self.postUpdates("HITLERKILL"+victim)
+            self.postUpdate("HITLERKILL"+victim)
             self.liberalsWin()
         else:
             self.offerNextRound()

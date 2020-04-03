@@ -16,7 +16,7 @@ class SeedDB(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ("/", BasePage),
-    ("/seed-db",SeedDB),
+    # ("/seed-db",SeedDB),
     ("/main", MainPage),
     ("/game-lounge", GameLoungePage),
     ("/game-lounge/secret-hitler", SecretHitlerPage),
