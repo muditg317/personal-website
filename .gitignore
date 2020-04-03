@@ -1,6 +1,5 @@
 *.pyc
 appengine-generated/
-node_modules
-package-lock.json
 .gcloudignore
 .idea
+.prettierrc
