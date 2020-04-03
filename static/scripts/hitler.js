@@ -168,7 +168,7 @@ const handleRolesGiven = (update) => {
                 if (index !== 0 && comrades.length !== 2) {
                     welcomeString += ',';
                 }
-                if (index === comrades.length - 1 && comrades.length !== 1) {
+                if (index === comrades.length - 1 && comrades.length > 1) {
                     welcomeString += ' and';
                 }
                 welcomeString += ' ' + comrade;
@@ -791,7 +791,7 @@ const handleGameOver = (update) => {
                 if (hitler) {
                     gameLog(`${player} was Hitler!`);
                 } else {
-                    gameLog(`${player} was a ${role}`);
+                    gameLog(`${player} was a ${role}.`);
                 }
             }
         });
@@ -805,7 +805,7 @@ const createNewGameButton = () => {
         newGameAction.id = 'newGameAction';
         actionBox.appendChild(newGameAction);
         let newGameTitle = document.createElement('P');
-        newGameTitle.innerText = 'Press when done with discussion.';
+        newGameTitle.innerText = 'Press to start a new game!';
         newGameAction.appendChild(newGameTitle);
         let buttonBox = document.createElement('DIV');
         buttonBox.className = 'buttonBox';
@@ -814,7 +814,7 @@ const createNewGameButton = () => {
         newGameAction.appendChild(buttonBox);
         newGameButton.className = 'prettyButton';
         newGameButton.id = 'newGameButton';
-        newGameButton.innerText = 'Next Round';
+        newGameButton.innerText = 'New Game';
         newGameButton.onclick = (e) => {
             let data = {
                 type: 'NEWGAME'
@@ -829,6 +829,10 @@ const handleNewGameOffered = (update) => {
 };
 
 const handleGameReset = (update) => {
+    let newGameAction = document.querySelector('#newGameAction');
+    if (newGameAction !== null) {
+        actionBox.removeChild(newGameAction);
+    }
     let players = update.substring(update.indexOf('|') + 1).split(',');
     players.forEach((player) => {
         if (player !== me.username) {

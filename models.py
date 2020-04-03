@@ -503,7 +503,7 @@ class SH_Game(ndb.Model):
         self.postPowerResult(killUpdate)
         self.getPlayer(victim).die()
         if self.getPlayer(victim).role == "hitler":
-            self.postUpdate("HITLERKILL"+victim, self.getUsernames())
+            self.postUpdate("HITLERKILL"+victim)
             self.liberalsWin()
         else:
             self.offerNextRound()
