@@ -686,8 +686,8 @@ const handleInvestigationResult = (powerResult) => {
     gameLog(`${player} is a ${party}. Are you gonna spill the beans or lie??`);
 }
 const handleSpecialElectionResult = (powerResult) => {
-    let electionUpdate = powerResult.split("|")
-    let president = investigationUpdate[1];
+    let electionUpdate = powerResult.split("|");
+    let president = electionUpdate[1];
     gameLog(`${president} was elected in the special election!`);
     if (powerResult.includes("|PRES|")) {
         resetPlayerChooser();
