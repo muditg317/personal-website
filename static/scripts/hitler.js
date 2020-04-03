@@ -1074,6 +1074,7 @@ const handleHitlerResult = (updateJSON) => {
     handleRequests(update.requests);
 };
 const pollHitlerData = () => {
+    clearTimeout(pollTimeout);
     let xhttp = new XMLHttpRequest();
     // let time = 0;
     // let counter = setInterval(function () {
@@ -1121,6 +1122,7 @@ const postHitlerData = (jsonParams) => {
             if (this.status === 200) {
                 console.log('data was received');
                 console.log(this.responseText);
+                pollHitlerData();
                 // let ind = responseExpectors.indexOf(params['type']);
                 // if (ind >= 0) {
                 //     expectingUpdate = expectedResponse[ind];
