@@ -3,3 +3,5 @@ appengine-generated/
 .gcloudignore
 .idea
 .prettierrc
+sass_watch.bat
+gcloud_config.bat
