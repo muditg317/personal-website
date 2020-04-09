@@ -20,6 +20,10 @@
 {% block background_imgURL %}{% endblock %}
 
 {% block pageContent %}
+    <div class="header">
+        <h1 id="title">Game Lounge</h1>
+        <p>Click on a game to activate it</p>
+    </div>
     <div class="gameLounge_games">
         <div class="game" id="stacker">
             <h1>Stacker</h1>
@@ -46,19 +50,19 @@
                 {% endif %}
             </form>
         </div>
-        <!-- <div class="game" id="newGame">
-            <h1>The New Game</h1>
-            <p>I need game ideas!.</p>
-            <div class="gameBoard" id="gameContainer">
+        <div class="game" id="polkaDot">
+            <h1>Polka Dot Escape</h1>
+            <p>Avoid bigger dots, and eat smaller ones to grow!</p>
+            <div class="gameBoard" id="polkaDotContainer">
 
             </div>
-        </div> -->
+        </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
 <script language="javascript" type="text/javascript" src="../../static/scripts/libraries/p5.min.js"></script>
-<script language="javascript" type="text/javascript" src="../../static/scripts/StackerP5js.js"></script>
+<script language="javascript" type="text/javascript" src="../../static/scripts/StackerP5.js"></script>
 <script language="javascript" type="text/javascript" src="../../static/scripts/startHitler.js"></script>
-<!-- <script language="javascript" type="text/javascript" src="../../static/scripts/newGameP5.js"></script> -->
+<script language="javascript" type="text/javascript" src="../../static/scripts/PolkaDotP5.js"></script>
 {% endblock %}
