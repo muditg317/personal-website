@@ -4,7 +4,7 @@ let polkaDot = new p5((p) => {
 const INITIAL_SIZE = 25;
 const MAX_SIZE = 150;
 const MIN_SIZE = 20;
-const MAX_PERC_DIFF = 0.05;
+const MAX_PERC_DIFF = 0.02;
 
 const MAX_ENEMIES = 20;
 const FPS = 60;
@@ -133,10 +133,18 @@ class Dot {
         this.size = size;
         this.x = x;
         this.y = y;
-        this.vx = p.map(size, MIN_SIZE, MAX_SIZE, MAX_SPEED, MIN_SPEED) * (1 + (Math.random() * 0.4 - 0.2)) / Math.sqrt(2);
-        // Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED;
-        this.vy = p.map(size, MIN_SIZE, MAX_SIZE, MAX_SPEED, MIN_SPEED) * (1 + (Math.random() * 0.4 - 0.2)) / Math.sqrt(2);
-        // Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED;
+        // this.vx = p.map(size, MIN_SIZE, MAX_SIZE, MAX_SPEED, 0) * (1 + (Math.random() * 0.4 - 0.2)) / Math.sqrt(2);
+        // // Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED;
+        // this.vy = p.map(size, MIN_SIZE, MAX_SIZE, MAX_SPEED, 0) * (1 + (Math.random() * 0.4 - 0.2)) / Math.sqrt(2);
+        // // Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED;
+        let speed = p.map(size, MIN_SIZE, MAX_SIZE, MAX_SPEED, MIN_SPEED) * (1 + (Math.random() * 0.4 - 0.2));
+        let angle = Math.random() * Math.PI / 2;
+        this.vx = speed * Math.cos(angle);
+        this.vy = speed * Math.sin(angle);
+        // while ((speed = Math.pow(Math.pow((this.vx), 2) + Math.pow((this.vy), 2), 0.5)) < MIN_SPEED) {
+        //     this.vx *= MIN_SPEED / speed;
+        //     this.vy *= MIN_SPEED / speed;
+        // }
         if (!isPlayer) {
             if (Math.random() < 0.5) {
                 if (Math.random() < 0.5) {
@@ -145,12 +153,18 @@ class Dot {
                     this.x = p.width + this.size;
                     this.vx *= -1;
                 }
+                if (Math.random() < 0.5) {
+                    this.vy *= -1;
+                }
             } else {
                 if (Math.random() < 0.5) {
                     this.y = -this.size;
                 } else {
                     this.y = p.height + this.size;
                     this.vy *= -1;
+                }
+                if (Math.random() < 0.5) {
+                    this.vx *= -1;
                 }
             }
         }
